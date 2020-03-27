@@ -11,6 +11,7 @@ exports.addComment = function (req, res) {
 
 exports.getAllEvents = function (req, res) {
 	console.log("getAllEvents");
+	console.log("pkkkkkk");
 	req.database.query("SET lc_time_names = 'fr_FR';", (errorl, resultl) => {
 //});
 
