@@ -1,0 +1,139 @@
+<div class="container">
+	<div class="row">
+		<div class="col-md-8">
+
+			<div class="widget widget-table">
+				<div class="widget-header">
+					<h3><i class="fas fa-bookmark"></i>Affiches actives</h3>
+				</div>
+				<div class="widget-content" id="activeList"></div>
+			</div>
+
+			<div class="widget widget-table">
+				<div class="widget-header">
+					<h3><i class="fas fa-bookmark"></i>Affiches inactives</h3>
+				</div>
+				<div class="widget-content" id="inactiveList"></div>
+			</div>
+
+			<div class="widget widget-table" id="createMovieSection">
+				<div class="widget-header">
+					<h3><i class="fas fa-bookmark"></i>Créer une nouvelle affiche</h3>
+				</div>
+				<div class="widget-content">
+					<form method="POST" enctype="multipart/form-data" action="/module/clubCine/createMovie">
+						<div class="form-group container">
+							<label for="image" class="col-md-3 control-label">Image</label>
+							<div class="col-md-6">
+								<input type="file" class="form-control" id="image" name="image">
+							</div>
+						</div>
+						<div class="form-group container">
+							<label for="title" class="col-md-3 control-label">Titre</label>
+							<div class="col-md-6">
+								<input type="text" class="form-control" id="title" name="title">
+							</div>
+						</div>
+						<div class="form-group container">
+							<label for="infos" class="col-md-3 control-label">Infos</label>
+							<div class="col-md-6">
+								<input type="text" class="form-control" id="infos" name="infos">
+							</div>
+						</div>
+						<div class="form-group container">
+							<label for="date" class="col-md-3 control-label">Date</label>
+							<div class="col-md-6">
+								<input type="date" class="form-control" id="date" name="date">
+							</div>
+						</div>
+						<div class="form-group container">
+							<label for="hour" class="col-md-3 control-label">Heure</label>
+							<div class="col-md-6">
+								<input type="time" class="form-control" id="hour" name="hour">
+							</div>
+						</div>
+						<div class="form-group container">
+							<label for="synopsis" class="col-md-3 control-label">Synopsis</label>
+							<div class="col-md-6">
+								<textarea name="synopsis" id="synopsis"></textarea>
+							</div>
+						</div>
+						<div class="form-group container">
+							<div class="form-group container">
+								<button class="btn btn-primary pull-left" id="cancelCreateMovie">Annuler</button>
+								<button type="submit" class="btn btn-primary pull-right">Créer</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<div class="widget widget-table" id="updateMovieSection">
+				<div class="widget-header">
+					<h3 id="updateHead"><i class="fas fa-bookmark"></i></h3>
+				</div>
+				<div class="widget-content">
+					<form method="POST" enctype="multipart/form-data" action="/module/clubCine/updateMovie">
+						<div class="form-group container">
+							<label for="updateImage" class="col-md-3 control-label">Image</label>
+							<div class="col-md-6">
+								<input type="file" class="form-control" id="updateImage" name="image">
+							</div>
+						</div>
+						<div class="form-group container">
+							<label for="updateTitle" class="col-md-3 control-label">Titre</label>
+							<div class="col-md-6">
+								<input type="text" class="form-control" id="updateTitle" name="title">
+							</div>
+						</div>
+						<div class="form-group container">
+							<label for="updateInfos" class="col-md-3 control-label">Infos</label>
+							<div class="col-md-6">
+								<input type="text" class="form-control" id="updateInfos" name="infos">
+							</div>
+						</div>
+						<div class="form-group container">
+							<label for="updateDate" class="col-md-3 control-label">Date</label>
+							<div class="col-md-6">
+								<input type="date" class="form-control" id="updateDate" name="date">
+							</div>
+						</div>
+						<div class="form-group container">
+							<label for="updateHour" class="col-md-3 control-label">Heure</label>
+							<div class="col-md-6">
+								<input type="time" class="form-control" id="updateHour" name="hour">
+							</div>
+						</div>
+						<div class="form-group container">
+							<label for="updateSynopsis" class="col-md-3 control-label">Synopsis</label>
+							<div class="col-md-6">
+								<textarea name="synopsis" id="updateSynopsis"></textarea>
+							</div>
+						</div>
+						<div class="form-group container">
+							<input type="hidden" id="movieId" name="id" value="">
+							<button class="btn btn-primary pull-left" id="cancelUpdate">Annuler</button>
+							<button type="submit" class="btn btn-primary pull-right" id="applyUpdate">Enregistrer</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-4">
+			<div class="widget widget-table">
+				<div class="widget-header">
+					<h3><i class="fas fa-bookmark"></i>Utilisation</h3>
+				</div>
+				<div class="widget-content">
+					<p>De duro est ultima fero, protinus irrupit venae pejoris in aevum omne nefas : fugere pudor, verumque, fidesque, in quorum subiere locum fraudesque, dolique, insidiaeque, et vis, et amor sceleratus habendi. (Ovide, L'âge de fer, Les
+						Métamorphoses)
+					</p>
+					<div class="form-group container">
+						<button class="btn btn-primary pull-right" id="createMovieForm">Nouvelle affiche</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,435 @@
+/* HEADER */
+header {
+	background-color: var(--aeecl-color-light);
+	top: 0;
+	margin: 0;
+	padding: 0;
+	z-index: 1;
+	position: fixed;
+	width: 100%;
+	height: 40px;
+}
+
+#title-container {
+	text-align: center;
+}
+
+#title {
+	margin: 0;
+	padding: 0;
+	color: white;
+	font-family: var(--aeecl-boldfont);
+}
+
+#signin {
+	text-align: right;
+}
+
+#menu {
+	padding: 10px;
+}
+
+#menu li {
+	display: inline-block;
+	width: 100%;
+
+	text-align: center;
+	font-size: 100%;
+	background-color: rgba(255, 255, 255, 0.9);
+
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-o-border-radius: 10px;
+	-webkit-border-radius: 10px;
+
+	transition: background-color 0.5s, color 0.5s;
+	-moz-transition: background-color 0.5s, color 0.5s;
+	-o-transition: background-color 0.5s, color 0.5s;
+	-webkit-transition: background-color 0.5s, color 0.5s;
+}
+
+#menu li:hover {
+	background-color: var(--aeecl-color-light);
+}
+
+#menu li a {
+	display: block;
+	padding: 9px 18px;
+
+	font-weight: bold;
+	color: var(--aeecl-color-dark);
+	text-decoration: none;
+
+	transition: background-color 0.5s, color 0.5s;
+	-moz-transition: background-color 0.5s, color 0.5s;
+	-o-transition: background-color 0.5s, color 0.5s;
+	-webkit-transition: background-color 0.5s, color 0.5s;
+}
+
+#menu li a:hover {
+	color: white;
+}
+
+/* FIN DU HEADER */
+
+/* PARTIE PRINCIPALE DU SITE */
+.texte {
+	height: 600px;
+	margin: 70px 70px 30px 70px;
+
+	text-align: justify;
+	text-align-last: center;
+	-moz-text-align-last: center;
+	-o-text-align-last: center;
+	-webkit-text-align-last: center;
+}
+
+.titre_section {
+	display: inline-block;
+
+	text-align: center;
+	font-family: var(--aeecl-boldfont);
+	color: white;
+	text-shadow: 0 0 5px black;
+	font-size: 900%;
+	padding-top: 30%;
+
+	transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-webkit-transition-duration: 1s;
+}
+
+.titre_section.decalle {
+	padding-top: 0px;
+}
+
+.lien_description {
+	display: inline-block;
+	margin-left: 40px;
+
+	color: white;
+	text-shadow: 0 0 5px black;
+	text-decoration: underline;
+	font-size: 150%;
+}
+
+.description {
+	font-family: var(--aeecl-font);
+	font-size: 150%;
+	color: rgba(255, 255, 255, 0);
+
+	transition-duration: 0.5s;
+	-moz-transition-duration: 0.5s;
+	-o-transition-duration: 0.5s;
+	-webkit-transition-duration: 0.5s;
+}
+
+.description.decalle {
+	color: rgba(255, 255, 255, 1);
+	background-color: rgba(0, 0, 0, 0.4);
+}
+
+.section,
+.slide,
+.intro {
+	background-size: cover;
+}
+
+.intro {
+	height: 100%;
+}
+
+/* COVER IMAGES */
+
+.slide {
+	background-position: center 0;
+}
+
+/* Home */
+
+#section0 {
+	background-image: url(images/asso.jpg);
+	background-position: center 0;
+}
+
+#section0 .titre_section {
+	padding-top: 15%;
+}
+
+/* AEECL */
+
+#aeecl {
+	background-image: url(images/background.jpg);
+	background-position: center 20%;
+}
+
+#aeecl .titre_section {
+	padding-top: 0;
+}
+
+#aeecl .description {
+	color: white;
+	text-shadow: 0 0 5px black;
+}
+
+#bar {
+	background-image: url(images/AEECL/bar.jpeg);
+	background-position: center 50%;
+}
+
+#barpa {
+	background-image: url(images/AEECL/barpa.jpg);
+	background-position: center 20%;
+}
+
+#bda {
+	background-image: url(images/AEECL/bda.jpg);
+}
+
+#bde {
+	background-image: url(images/AEECL/bde.jpg);
+}
+
+#bi {
+	background-image: url(images/AEECL/bi.jpg);
+	background-position: center 50%;
+}
+
+#ctn {
+	background-image: url(images/AEECL/ctn.png);
+	background-position: center 80%;
+}
+
+#dbs {
+	background-image: url(images/AEECL/dbs.jpg);
+	background-position: center 60%;
+}
+
+#eclair {
+	background-image: url(images/AEECL/eclair.jpg);
+	background-position: center 60%;
+}
+
+#gala {
+	background-image: url(images/AEECL/gala.jpg);
+	background-position: center 70%;
+}
+
+#pao {
+	background-image: url(images/AEECL/pao.jpg);
+}
+
+#ph {
+	background-image: url(images/AEECL/ph.png);
+}
+
+#sdec {
+	background-image: url(images/AEECL/sdec.jpg);
+	background-position: center 20%;
+}
+
+#wei {
+	background-image: url(images/AEECL/wei.png);
+	background-position: center 60%;
+}
+
+/* USEECL */
+
+#useecl {
+	background-image: url(images/background.jpg);
+	background-position: center 20%;
+}
+
+#useecl .titre_section {
+	padding-top: 0;
+}
+
+#useecl .description {
+	color: white;
+	text-shadow: 0 0 5px black;
+}
+
+#bad {
+	background-image: url(images/USEECL/bad.jpg);
+}
+
+#basket {
+	background-image: url(images/USEECL/basket.jpg);
+	background-position: center 40%;
+}
+
+#bds {
+	background-image: url(images/USEECL/bds.jpg);
+}
+
+#challenge {
+	background-image: url(images/USEECL/challenge.jpg);
+}
+
+#cheerlions {
+	background-image: url(images/Clubs/cheerlions.jpg);
+}
+
+#cmecl {
+	background-image: url(images/USEECL/cmecl.jpg);
+	background-position: center 60%;
+}
+
+#escrime {
+	background-image: url(images/USEECL/escrime.jpg);
+	background-position: center 100%;
+}
+
+#foot {
+	background-image: url(images/USEECL/foot.jpg);
+	background-position: center 60%;
+}
+
+#raid {
+	background-image: url(images/USEECL/raid.jpg);
+}
+
+#rugby {
+	background-image: url(images/USEECL/rugby.jpg);
+	background-position: center 60%;
+}
+
+#tennis {
+	background-image: url(images/USEECL/club-tennis.png);
+}
+
+#volley {
+	background-image: url(images/USEECL/volley.jpg);
+	background-position: center 80%;
+}
+
+/* Indép */
+
+#indep {
+	background-image: url(images/background.jpg);
+	background-position: center 20%;
+}
+
+#indep .titre_section {
+	padding-top: 0;
+}
+
+#indep .description {
+	color: white;
+	text-shadow: 0 0 5px black;
+}
+
+#cheerup {
+	background-image: url(images/Indep/cheerup.jpg);
+}
+
+#clc {
+	background-image: url(images/Indep/clc.jpg);
+}
+
+#epsa {
+	background-image: url(images/Indep/epsa.jpg);
+	background-position: center 40%;
+}
+
+#fablab {
+	background-image: url(images/Indep/fablab.jpg);
+}
+
+#forum {
+	background-image: url(images/Indep/forum.jpg);
+}
+
+#je {
+	background-image: url(images/Indep/je.jpg);
+	background-position: center 20%;
+}
+
+#planetandco {
+	background-image: url(images/Indep/planet-and-co.jpg);
+	background-position: center 10%;
+}
+
+#smartup {
+	background-image: url(images/Indep/smartup.jpg);
+}
+
+#soli {
+	background-image: url(images/Indep/soli.jpg);
+	background-position: center 30%;
+}
+
+/* Clubs */
+
+#clubs {
+	background-image: url(images/background.jpg);
+	background-position: center 20%;
+}
+
+#clubs .titre_section {
+	padding-top: 0;
+}
+
+#clubs .description {
+	color: white;
+	text-shadow: 0 0 5px black;
+}
+
+#bzh {
+	background-image: url(images/Clubs/bzh.jpg);
+	background-position: center 100%;
+}
+
+#cine {
+	background-image: url(images/Clubs/cine.jpeg);
+	background-position: center 30%;
+}
+
+#cirque {
+	background-image: url(images/Clubs/club-cirque.jpg);
+	background-position: center 50%;
+}
+
+#commuz {
+	background-image: url(images/Indep/commuz.jpg);
+	background-position: center 35%;
+}
+
+#danse {
+	background-image: url(images/Clubs/danse.jpg);
+}
+
+#japon {
+	background-image: url(images/Clubs/club-japon.png);
+}
+
+#kebab {
+	background-image: url(images/Clubs/kebab.jpg);
+	background-position: center 20%;
+}
+
+#pits {
+	background-image: url(images/Clubs/pits.jpg);
+}
+
+#photo {
+	background-image: url(images/Clubs/club-photo.jpg);
+	background-position: center 60%;
+}
+
+#rainbow {
+	background-image: url(images/Clubs/rainbow.png);
+}
+
+#str {
+	background-image: url(images/Clubs/str.jpg);
+}
+
+#tai-chi {
+	background-image: url(images/Clubs/tai-chi.jpg);
+}
+
+#theatre {
+	background-image: url(images/Clubs/theatre.jpg);
+}

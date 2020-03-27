@@ -1,0 +1,144 @@
+/* MENU */
+
+ul.main-menu .sub-menu li a {
+	padding: 5px 0 5px 33%;
+}
+
+.ribbon {
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 100%;
+	width: 100px;
+	z-index: 1;
+	border-bottom: 50px solid transparent;
+	border-right: 50px solid var(--aeecl-color-dark);
+}
+
+.ribbon span {
+	display: block;
+	position: absolute;
+	top: 3px;
+	right: -50px;
+	transform: rotate(45deg);
+
+	color: white;
+	text-transform: uppercase;
+	font-weight: bold;
+	line-height: 30px;
+}
+
+/* HEADER */
+
+.top-bar {
+	background-color: var(--aeecl-color-light);
+}
+
+.top-bar-right .icone {
+	display: inline-block;
+	vertical-align: middle;
+	vertical-align: auto;
+	font-size: 100%;
+	padding: 0 10px;
+}
+
+.top-bar-right .icone .fa,
+.top-bar-right .icone .fas,
+.top-bar-right .icone .fab {
+	color: white;
+}
+
+#dynamicHeader {
+	margin-right: 40px;
+}
+
+#logout {
+	display: inline-block;
+	padding: initial;
+	padding: 0;
+	margin: 0;
+	position: fixed;
+	top: -4px;
+	right: 10px;
+	font-size: 3em;
+	color: white;
+}
+
+/* TITRE*/
+
+#titleMyECL {
+	font-family: var(--aeecl-boldfont);
+	font-size: 170%;
+	margin-left: 20px;
+}
+
+#titleMyECL a {
+	color: white;
+}
+
+#titleMyECL a:hover {
+	text-decoration: none;
+}
+
+/* CONTENT */
+
+#wrapper {
+	position: relative;
+	min-height: 100vh;
+}
+
+#main-content-wrapper {
+	padding-bottom: 50px;
+}
+
+/* CONTACT */
+
+#contact-content-wrapper {
+	clear: both;
+	position: relative;
+	height: 50px;
+}
+
+/* TILES */
+
+.tile {
+	margin-bottom: 15px;
+	/* Pour espacer 2 lignes de tuiles */
+	border: solid;
+	border-color: lightgray;
+	border-width: 1px;
+	overflow: hidden;
+}
+
+.tile-header {
+	border-bottom: solid;
+	border-bottom-color: lightgray;
+	border-bottom-width: 1px;
+	background-color: #eeeeee;
+	padding-right: 5px;
+	padding-left: 5px;
+	text-align: center;
+	font-size: 110%;
+	color: #555;
+}
+
+.boutons-droite {
+	right: 100%;
+	display: inline-block;
+	/* float: right; */
+}
+
+.boutons-droite a {
+	color: #555
+}
+
+.tile-body {
+	text-align: center;
+}
+
+
+/* Pour le caroussel de la démo */
+
+.item img {
+	height: 100%;
+}

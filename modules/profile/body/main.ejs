@@ -1,0 +1,248 @@
+<form class="form-knowledge-search" action="" method="get">
+	<div class="input-group input-group-lg">
+		<input type="search" id="search_content" placeholder="Rechercher un utilisateur" class="form-control">
+		<span class="input-group-btn"><button class="btn btn-primary" id="search_button" type="button"><i class="fa fa-search"></i>
+				Rechercher</button></span>
+	</div>
+</form>
+
+<div id="search_results"></div>
+
+<div class="modal fade" id="modal-event" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close closing" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">Ajouter une image</h4>
+			</div>
+			<div class="modal-body">
+				<input form="mainform" type="file" id="img-input" name="picture" accept="image/*">
+				<div id="main-cropper"></div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default closing" data-dismiss="modal">Annuler</button>
+				<button style="display:none;" type="button" class="btn btn-primary" id="valid-resize">Valider</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<% if (updated == true) { %>
+<div class="alert alert-success alert-dismissable">
+	<a href="" class="close">×</a>Votre profil a bien été mis à jour !
+</div>
+<% } %>
+
+<!-- 
+    Premier cas : Le profil a été trouvé
+    On l'affiche quoi qu'il arrive et on le rend éditable si possible
+-->
+<% if (found) { %>
+
+<div class="profile">
+	<div class="row">
+		<div class="col-md-3">
+			<div class="user-info-left">
+				<% if (picture != '0') { %>
+				<img src="/uploads/<%= picture %>" width="200" alt="Profile Picture" />
+				<% if (editable) { %>
+				<button type="button" class="update_picture btn btn-warning">Modifier</button>
+				<button id="delete_picture" type="button" class="btn btn-danger">Supprimer</button>
+				<% } %>
+				<% } else { %>
+				<img src="/misc/profile/avatar" width="200" alt="Profile Picture" />
+				<% if (editable) { %>
+				<button type="button" class="update_picture btn btn-warning">Ajouter</button>
+				<% } %>
+				<% } %>
+				<h2>
+					<%=nick%>
+					<% if (online == true) { %>
+					<i class="fa fa-circle green-font online-icon"></i><sup class="sr-only">connecté</sup>
+					<% } else { %>
+					<i class="fa fa-circle grey-font online-icon"></i><sup class="sr-only">hors ligne</sup>
+					<% } %>
+				</h2>
+				<h3>(
+					<%=firstname%>
+					<%=name%>)</h3>
+				<% if (online == false) { %>
+				<h6><i>Dernière connexion le
+						<%= last_seen_date %> à
+						<%= last_seen_hour %></i></h6>
+				<% } %>
+
+				<% if(assos.length) { %>
+				<hr>
+				<h3>Associatif</h3>
+				<div style='text-align:left !important'>
+					<ul class="fa-ul">
+						<% for (let i in assos){ %>
+						<li><i class="fa fa-certificate"></i>
+							<%= assos[i].name %>
+						</li>
+						<% } %>
+					</ul>
+				</div>
+				<% } %>
+			</div>
+		</div>
+		<div class="col-md-9">
+			<div class="user-info-right">
+				<div class="basic-info">
+					<h3><i class="fa fa-square"></i> Vue d'ensemble</h3>
+					<p class="data-row">
+						<span class="data-name">Nom d'utilisateur</span>
+						<span class="data-value">
+							<% if (login != null){ %>
+							<%=login%>
+							<% } else { %>
+							<i>Non renseigné</i>
+							<% } %>
+						</span>
+					</p>
+					<p class="data-row">
+						<span class="data-name">Nom</span>
+						<span class="data-value">
+							<% if (editable) { %>
+							<input type="text" class="form-control" id="name" value="<%=name%>">
+							<% } else { %>
+							<% if (name != null){ %>
+							<%=name%>
+							<% } else { %>
+							<i>Non renseigné</i>
+							<% } %>
+							<% } %>
+						</span>
+					</p>
+					<p class="data-row">
+						<span class="data-name">Prénom</span>
+						<span class="data-value">
+							<% if (editable) { %>
+							<input type="text" class="form-control" id="firstname" value="<%=firstname%>">
+							<% } else { %>
+							<% if (firstname != null){ %>
+							<%=firstname%>
+							<% } else { %>
+							<i>Non renseigné</i>
+							<% } %>
+							<% } %>
+						</span>
+					</p>
+					<p class="data-row">
+						<span class="data-name">Date de naissance</span>
+						<span class="data-value">
+							<% if (editable) { %>
+							<input type="text" class="form-control" id="birth" value="<%=birth%>" placeholder="JJ/MM/AAAA">
+							<% } else { %>
+							<% if (birth != null){ %>
+							<%=name%>
+							<% } else { %>
+							<i>Non renseigné</i>
+							<% } %>
+							<% } %>
+						</span>
+					</p>
+				</div>
+				<div class="contact_info">
+					<h3><i class="fa fa-square"></i> Vie à Centrale et contact</h3>
+					<p class="data-row">
+						<span class="data-name">Surnom</span>
+						<span class="data-value">
+							<% if (editable) { %>
+							<input type="text" class="form-control" id="nick" value="<%=nick%>">
+							<% } else { %>
+							<% if (nick != null){ %>
+							<%=name%>
+							<% } else { %>
+							<i>Non renseigné</i>
+							<% } %>
+							<% } %>
+						</span>
+					</p>
+					<p class="data-row">
+						<span class="data-name">Etage</span>
+						<span class="data-value">
+							<% if (editable) { %>
+							<input type="text" class="form-control" id="floor" value="<%=floor%>">
+							<% } else { %>
+							<% if (floor != null){ %>
+							<%=floor%>
+							<% } else { %>
+							<i>Non renseigné</i>
+							<% } %>
+							<% } %>
+						</span>
+					</p>
+					<p class="data-row">
+						<span class="data-name">Email</span>
+						<span class="data-value">
+							<% if (editable) { %>
+							<input type="text" class="form-control" id="email" value="<%=email%>">
+							<% } else { %>
+							<% if (email != null){ %>
+							<%=email%>
+							<% } else { %>
+							<i>Non renseigné</i>
+							<% } %>
+							<% } %>
+						</span>
+					</p>
+					<p class="data-row">
+						<span class="data-name">Promotion entrante</span>
+						<span class="data-value">
+							<% if (editable) { %>
+							<input type="text" class="form-control" id="promo" value="<%=promo%>">
+							<% } else { %>
+							<% if (promo != null){ %>
+							<%=promo%>
+							<% } else { %>
+							<i>Non renseigné</i>
+							<% } %>
+							<% } %>
+						</span>
+					</p>
+					<br>
+					<% if (editable) {%>
+					<div id="errors"></div>
+					<button class="btn btn-primary btn-lg" type="button" id="save">Mettre à jour le profil</button>
+
+					<br>
+					<hr>
+
+					<form class="form-horizontal label-left" role="form" action="" method="">
+						<div class="form-group">
+							<label for="old" class="col-sm-5 control-label">Ancien mot de passe</label>
+							<div class="col-sm-7">
+								<input type="password" id="old" class="form-control">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="new" class="col-sm-5 control-label">Nouveau mot de passe</label>
+							<div class="col-sm-7">
+								<input type="password" id="new" class="form-control">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="new_check" class="col-sm-5 control-label">Nouveau mot de passe<br><small>Vérification</small></label>
+							<div class="col-sm-7">
+								<input type="password" id="new_check" class="form-control">
+							</div>
+						</div>
+						<div id="errorsPassword"></div>
+						<button class="btn btn-primary btn-lg" type="button" id="savePassword">Mettre à jour le mot de passe</button>
+					</form>
+					<% } %>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 
+    Deuxième cas : Le profil n'a pas été trouvé
+    On informe l'utilisateur et on lui propose de retourner sur son profil
+-->
+<% } else { %>
+Le profil n'a pas été trouvé. <a href="/home/profile/profile/-1">Retour au profil personnel</a>
+<% } %>

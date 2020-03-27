@@ -1,0 +1,78 @@
+#connexion {
+	margin-top: 100px;
+	padding: 0;
+	border: solid;
+	border-color: var(--aeecl-color-light);
+	border-width: 1px;
+	background-color: white;
+}
+
+#connexion-header {
+	background-color: var(--aeecl-color-light);
+	color: white;
+	font-family: var(--aeecl-font);
+	font-size: 200%;
+	text-align: center;
+}
+
+#form-connect {
+	padding: 15px;
+	text-align: justify;
+}
+
+legend {
+	text-align: center;
+}
+
+#inscription {
+	margin-bottom: 15px;
+}
+
+ul.main-menu .sub-menu li a {
+	padding: 5px 0 5px 33%;
+}
+
+.top-bar {
+	background-color: var(--aeecl-color-light);
+}
+
+/* Titre */
+
+#title {
+	font-family: var(--aeecl-font);
+	/* à importer */
+	font-size: 170%;
+	margin-left: 20px;
+}
+
+#title a {
+	color: white;
+}
+
+#title a:hover {
+	text-decoration: none;
+}
+
+.top-bar-right .icone {
+	display: inline-block;
+	font-size: 100%;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.top-bar-right .icone .fa {
+	color: white;
+}
+
+.top-bar-right #user {
+	font-size: 150%;
+}
+
+#contact-content-wrapper {
+	position: fixed;
+	width: 100%;
+	bottom: 0;
+	height: 50px;
+	/* text-align:center; */
+	border-top: 2px solid #555;
+}

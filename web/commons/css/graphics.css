@@ -1,0 +1,21 @@
+@font-face {
+	font-family: "impact";
+	src: url('/commons/fonts/impact.ttf');
+}
+
+@font-face {
+	font-family: "raleway";
+	src: url('/commons/fonts/raleway.ttf');
+}
+
+@font-face {
+	font-family: "ralewaybold";
+	src: url('/commons/fonts/ralewaybold.ttf');
+}
+
+:root {
+	--aeecl-color-light: rgb(47, 134, 193);
+	--aeecl-color-dark: rgb(9, 86, 124);
+	--aeecl-font: "raleway";
+	--aeecl-boldfont: "ralewaybold";
+}

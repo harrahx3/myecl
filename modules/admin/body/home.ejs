@@ -1,0 +1,43 @@
+<div class="content">
+	<div class="main-content">
+		<p class="h3 lead">Administration des groupes</p>
+		<ul class="list-unstyled activity-list">
+			<% for(let i in groups){ %>
+			<li>
+				<i class="fas fa-user activity-icon pull-left"></i>
+				<p>
+					<a href="javascript:relocate('internal', 'admin', 'group/<%=groups[i].id%>');">
+						<%=groups[i].description%></a>
+					<span class="timestamp">#
+						<%=groups[i].name%></span>
+				</p>
+			</li>
+			<% } %>
+		</ul>
+
+		<p class="h3 lead">Créer un groupe</p>
+		<div class="row">
+			<div class="col-md-4">
+				<span id="error"></span>
+			</div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-md-4">
+				<input type="text" class="form-control" name="name" id="name" placeholder="Nom du groupe" />
+			</div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-md-4">
+				<textarea class="form-control" name="description" id="description" placeholder="Description du groupe"></textarea>
+			</div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-md-4">
+				<button id="addGroup" class="btn btn-primary">Créer le groupe</button>
+			</div>
+		</div>
+	</div>
+</div>

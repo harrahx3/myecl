@@ -1,0 +1,15 @@
+{
+	"enabled": [
+		"admin",
+		"profile",
+		"jestudies",
+		"amap",
+		"sdec",
+		"clubcine",
+		"bdenewsletter",
+		"bdecalendar",
+		"wei",
+		"reservations",
+		"aqh"
+	]
+}
