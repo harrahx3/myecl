@@ -93,7 +93,7 @@ $(".add").click(function (e) {
 		$("#main-content-wrapper").html(result);
 	});
 });
-console.log("testeeeeeeeee");
+
 $(".addComment").click(function (e) {
 //$(document).on('click', '.add', function () {
 
