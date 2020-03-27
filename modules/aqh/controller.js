@@ -86,7 +86,6 @@ exports.getAllEvents = function (req, res) {
 							if (resultQuery.length > 0) {
 								var posts = [];
 								for (r of resultQuery) {
-									console.log(r['date']);
 									var post={
 										id: r['id'],
 										content: r['content'],
