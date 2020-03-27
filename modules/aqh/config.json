@@ -1,0 +1,181 @@
+{
+	"description": "module AQH",
+	"authorisation": "",
+	"beta": true,
+	"contact": {
+		"firstname": "Victor",
+		"lastname": "Creuzet",
+		"phone": "",
+		"email": "victor.creuzet@ecl19.ec-lyon.fr"
+	},
+	"tables": [{
+		"name": "AQHevents",
+		"schema": {
+			"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
+			"title": "TEXT",
+			"content": "TEXT",
+			"date": "TEXT",
+			"author": "INT"
+		}
+	},
+	{
+		"name": "AQHposts",
+		"schema": {
+			"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
+			"eventid": "INT",
+			"content": "TEXT",
+			"date": "TEXT",
+			"author": "INT"
+		}
+	},
+	{
+		"name": "AQHcomments",
+		"schema": {
+			"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
+			"postid": "INT",
+			"content": "TEXT",
+			"date": "TEXT",
+			"author": "INT"
+		}
+	}],
+	"includes": {},
+	"rules": [{
+		"call": {
+			"type": "callback",
+			"location": "getAllEvents"
+		},
+		"viewport": {
+			"type": "internal",
+			"location": "home"
+		},
+		"includes": {
+			"scripts": ["static/home.js", "static/summernote.min.js"]
+		},
+		"authorisation": ""
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getOne"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/aqh/getOne"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getAll"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/aqh/getAll"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getAllFrom"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/aqh/getAllFrom"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getAllEvents"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/aqh/getAllEvents"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "add"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/aqh/add",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"authorisation": ""
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "addComment"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/aqh/addComment",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"authorisation": ""
+	},{
+		"call": {
+			"type": "callback",
+			"location": "update"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/aqh/update",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"authorisation": ""
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "delete"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/aqh/delete",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"authorisation": ""
+	},{
+		"call": {
+			"type": "callback",
+			"location": "deleteComment"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/aqh/deleteComment",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"authorisation": ""
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getPostComments"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/aqh/getPostComments",
+			"method": "POST",
+			"enctype": "urlencoded"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getPostsForEvent"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/aqh/getPostsForEvent",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"authorisation": ""
+	}],
+	"menu": [{
+		"name": "AQH",
+		"type": "internal",
+		"anchor": "home",
+		"authorisation": ""
+	}]
+}

@@ -1,0 +1,228 @@
+{
+	"description": "Service de vente de paniers biologiques",
+	"authorisation": "",
+	"beta": true,
+	"contact": {
+		"firstname": "Maxime",
+		"lastname": "Grosso",
+		"phone": "",
+		"email": "maxime.grosso@gmail.com"
+	},
+	"tables": [{
+		"name": "CommandeAmap",
+		"schema": {
+			"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
+			"user_id": "INTEGER",
+			"products": "TEXT",
+			"week": "INTEGER"
+		}
+	}, {
+		"name": "SoldeAmap",
+		"schema": {
+			"user_id": "INTEGER PRIMARY KEY NOT NULL",
+			"amount": "FLOAT"
+		}
+	}, {
+		"name": "ProduitAmap",
+		"schema": {
+			"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
+			"price": "FLOAT",
+			"name": "TEXT"
+		}
+	}, {
+		"name": "SemaineAmap",
+		"schema": {
+			"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
+			"start": "DATE",
+			"end": "DATE"
+		}
+	}],
+	"includes": {},
+	"rules": [{
+		"call": {
+			"type": "static",
+			"location": "body/home.html"
+		},
+		"viewport": {
+			"type": "internal",
+			"location": "home"
+		},
+		"includes": {
+			"scripts": "static/home.js",
+			"styles": "static/home.css"
+		},
+		"authorisation": ""
+	}, {
+		"call": {
+			"type": "static",
+			"location": "body/admin.html"
+		},
+		"viewport": {
+			"type": "internal",
+			"location": "admin"
+		},
+		"includes": {
+			"scripts": "static/admin.js",
+			"styles": "static/admin.css"
+		},
+		"authorisation": "amap"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "addProduct"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/amap/addProduct",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"authorisation": "amap"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "removeProduct"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/amap/removeProduct",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"authorisation": "amap"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "toggleWeek"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/amap/toggleWeek",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"authorisation": "amap"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getCash"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/amap/getCash"
+		},
+		"authorisation": "amap"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "updateCash"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/amap/updateCash",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"authorisation": "amap"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getAllOrders"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/amap/getAllOrders"
+		},
+		"authorisation": "amap"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "searchUser"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/amap/searchUser"
+		},
+		"authorisation": "amap"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getAccount"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/amap/getAccount"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getProducts"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/amap/getProducts"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getWeeks"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/amap/getWeeks"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "computePrice"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/amap/computePrice"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "updateOrder"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/amap/updateOrder",
+			"method": "POST",
+			"enctype": "urlencoded"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "removeOrder"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/amap/removeOrder",
+			"method": "POST",
+			"enctype": "urlencoded"
+		}
+	}],
+	"menu": [{
+		"name": "Panier AMAP",
+		"type": "internal",
+		"anchor": "home",
+		"authorisation": {
+			"groups": "amap",
+			"negation": true
+		}
+	}, {
+		"name": "AMAP",
+		"type": "submenu",
+		"anchor": [{
+			"name": "Panier AMAP",
+			"type": "internal",
+			"anchor": "home"
+		}, {
+			"name": "Administration",
+			"type": "internal",
+			"anchor": "admin"
+		}],
+		"authorisation": "amap"
+	}]
+}

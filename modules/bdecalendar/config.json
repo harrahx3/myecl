@@ -1,0 +1,108 @@
+{
+	"description": "Calendrier associatif",
+	"authorisation": "",
+	"beta": false,
+	"contact": {
+		"firstname": "Raphaël",
+		"lastname": "Régnault",
+		"phone": "",
+		"email": "raphael.regnault@ecl17.ec-lyon.fr"
+	},
+	"tables": [{
+		"name": "BDECalendar",
+		"schema": {
+			"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
+			"title": "VARCHAR(255)",
+			"description": "TEXT",
+			"start": "DATETIME",
+			"end": "DATETIME",
+			"location": "VARCHAR(255)",
+			"organisation": "VARCHAR(255)",
+			"target": "VARCHAR(255)"
+		}
+	}],
+	"includes": {},
+	"rules": [{
+		"call": {
+			"type": "static",
+			"location": "body/home.html"
+		},
+		"viewport": {
+			"type": "internal",
+			"location": "home"
+		},
+		"includes": {
+			"scripts": ["static/fullcalendar.js", "static/home.js"],
+			"styles": "static/home.css"
+		}
+	}, {
+		"call": {
+			"type": "static",
+			"location": "body/admin.html"
+		},
+		"viewport": {
+			"type": "internal",
+			"location": "admin"
+		},
+		"includes": {
+			"scripts": ["static/fullcalendar.js", "static/admin.js"],
+			"styles": "static/admin.css"
+		},
+		"authorisation": "bde"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getAll"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/bdecalendar/getAll"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "add"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/bdecalendar/add",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"authorisation": "bde"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "delete"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/bdecalendar/delete",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"authorisation": "bde"
+	}],
+	"menu": [{
+		"name": "Calendrier associatif",
+		"type": "internal",
+		"anchor": "home",
+		"authorisation": {
+			"groups": "bde",
+			"negation": true
+		}
+	}, {
+		"name": "BDE Calendrier",
+		"type": "submenu",
+		"anchor": [{
+			"name": "Calendrier",
+			"type": "internal",
+			"anchor": "home"
+		}, {
+			"name": "Administration",
+			"type": "internal",
+			"anchor": "admin"
+		}],
+		"authorisation": "bde"
+	}]
+}

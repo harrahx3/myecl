@@ -1,0 +1,153 @@
+{
+	"description": "Mur d'affichage des études JE disponibles",
+	"authorisation": "",
+	"beta": true,
+	"contact": {
+		"firstname": "Arthur",
+		"lastname": "Presse",
+		"phone": "0632230810",
+		"email": "arthur.presse@gmail.com"
+	},
+	"tables": [{
+		"name": "je_studies",
+		"schema": {
+			"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
+			"appliants": "TEXT",
+			"description": "TEXT",
+			"title": "VARCHAR(255)"
+		}
+	}],
+	"includes": {},
+	"rules": [{
+		"call": {
+			"type": "static",
+			"location": "body/home.html"
+		},
+		"viewport": {
+			"type": "internal",
+			"location": "home"
+		},
+		"includes": {
+			"scripts": [
+				"static/home.js"
+			],
+			"styles": [
+				"static/home.css"
+			]
+		}
+	}, {
+		"call": {
+			"type": "static",
+			"location": "body/admin.html"
+		},
+		"viewport": {
+			"type": "internal",
+			"location": "admin"
+		},
+		"includes": {
+			"scripts": [
+				"static/summernote.min.js",
+				"static/admin.js"
+			],
+			"styles": [
+				"static/admin.css"
+			]
+		},
+		"authorisation": "je"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getAll"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/jestudies/getAll"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getAllAdmin"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/jestudies/getAllAdmin"
+		},
+		"authorisation": "je"
+
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "add"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/jestudies/add",
+			"method": "POST"
+		},
+		"authorisation": "je"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "update"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/jestudies/update",
+			"method": "POST"
+		},
+		"authorisation": "je"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "delete"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/jestudies/delete",
+			"method": "POST"
+		},
+		"authorisation": "je"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "apply"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/jestudies/apply",
+			"method": "POST"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "quit"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/jestudies/quit",
+			"method": "POST"
+		}
+	}],
+	"menu": [{
+		"name": "Études JE",
+		"type": "internal",
+		"anchor": "home",
+		"authorisation": {
+			"groups": "je",
+			"negation": true
+		}
+	}, {
+		"name": "JE",
+		"type": "submenu",
+		"anchor": [{
+			"name": "Études JE",
+			"type": "internal",
+			"anchor": "home"
+		}, {
+			"name": "Administration",
+			"type": "internal",
+			"anchor": "admin"
+		}],
+		"authorisation": "je"
+	}]
+}

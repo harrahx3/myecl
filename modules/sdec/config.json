@@ -1,0 +1,136 @@
+{
+	"description": "Commande d'impressions en ligne",
+	"beta": true,
+	"authorisation": "",
+	"tables": [{
+		"name": "CommandeSdec",
+		"schema": {
+			"order_id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
+			"quantity": "INTEGER",
+			"pages": "INTEGER",
+			"format": "VARCHAR(4)",
+			"color": "VARCHAR(1)",
+			"recto_verso": "VARCHAR(1)",
+			"price": "FLOAT",
+			"file_path": "TEXT",
+			"comment": "TEXT",
+			"user_id": "INTEGER",
+			"state": "VARCHAR(255)"
+		}
+	}],
+	"rules": [{
+		"call": {
+			"type": "static",
+			"location": "body/home.html"
+		},
+		"viewport": {
+			"type": "internal",
+			"location": "home"
+		},
+		"includes": {
+			"scripts": [
+				"static/jquery.bootstrap-touchspin.js",
+				"static/home.js"
+			],
+			"styles": "static/home.css"
+		},
+		"authorisation": ""
+	}, {
+		"call": {
+			"type": "static",
+			"location": "body/admin.html"
+		},
+		"viewport": {
+			"type": "internal",
+			"location": "admin"
+		},
+		"includes": {
+			"scripts": [
+				"static/admin.js",
+				"static/jquery.bootstrap-touchspin.js"
+			],
+			"styles": [
+				"static/admin.css"
+			]
+		},
+		"authorisation": "sdec"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getUserOrders"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/sdec/getUserOrders"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getAllOrders"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/sdec/getAllOrders"
+		},
+		"authorisation": "sdec"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "newOrder"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/sdec/newOrder",
+			"method": "POST",
+			"enctype": "multipart",
+			"options": {
+				"field": "document"
+			}
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "updateOrder"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/sdec/updateOrder",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"authorisation": "sdec"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "deleteOrder"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/sdec/deleteOrder",
+			"method": "POST",
+			"enctype": "urlencoded"
+		}
+	}],
+	"menu": [{
+		"name": "Impression SDeC",
+		"type": "internal",
+		"anchor": "home",
+		"authorisation": {
+			"groups": "sdec",
+			"negation": true
+		}
+	}, {
+		"name": "SDeC",
+		"type": "submenu",
+		"anchor": [{
+			"name": "Impressions SDeC",
+			"type": "internal",
+			"anchor": "home"
+		}, {
+			"name": "Administration",
+			"type": "internal",
+			"anchor": "admin"
+		}],
+		"authorisation": "sdec"
+	}]
+}

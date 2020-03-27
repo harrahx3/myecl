@@ -1,0 +1,38 @@
+{
+	"description": "Sample module",
+	"authorisation": "",
+	"beta": false,
+	"contact": {
+		"firstname": "Alexandre",
+		"lastname": "Magueresse",
+		"phone": "0679040698",
+		"email": "alexandre.magueresse@gmail.com"
+	},
+	"tables": [],
+	"includes": {},
+	"rules": [{
+		"call": {
+			"type": "static",
+			"location": "index.html"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/essai",
+			"enctype": "urlencoded"
+		},
+		"includes": {
+			"styles": "assets/style.css"
+		},
+		"authorisation": ""
+	}],
+	"header": [{
+		"icon": "<i class='fas fa-user'></i>",
+		"type": "external",
+		"anchor": "http://www.google.fr"
+	}],
+	"menu": [{
+		"name": "Lien interne",
+		"type": "external",
+		"anchor": "/essai"
+	}]
+}

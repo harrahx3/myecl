@@ -1,0 +1,187 @@
+{
+	"description": "Suivi équipes du rallye dans Lyon",
+	"authorisation": "",
+	"beta": true,
+	"contact": {
+		"firstname": "Thomas",
+		"lastname": "Heim de Balzac",
+		"phone": "",
+		"email": "thomas.heimdebalzac@ecl17.ec-lyon.fr"
+	},
+	"tables": [{
+		"name": "EquipeWei",
+		"schema": {
+			"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
+			"name": "VARCHAR(255)",
+			"phrase": "TEXT",
+			"number": "INTEGER",
+			"score": "INTEGER"
+		}
+	}, {
+		"name": "MembreEquipeWei",
+		"schema": {
+			"id_member": "INTEGER",
+			"id_team": "INTEGER"
+		}
+	}, {
+		"name": "ScoreEquipeWei",
+		"schema": {
+			"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
+			"team_id": "INTEGER",
+			"event": "VARCHAR(255)",
+			"bonus": "INTEGER"
+		}
+	}],
+	"rules": [{
+		"call": {
+			"type": "static",
+			"location": "body/home.html"
+		},
+		"viewport": {
+			"type": "internal",
+			"location": "home"
+		},
+		"includes": {
+			"scripts": "static/home.js",
+			"styles": "static/home.css",
+			"misc": {
+				"file": "static/logo_wei.png",
+				"location": "logo"
+			}
+		}
+	}, {
+		"call": {
+			"type": "static",
+			"location": "body/admin.html"
+		},
+		"viewport": {
+			"type": "internal",
+			"location": "admin"
+		},
+		"includes": {
+			"scripts": "static/admin.js",
+			"styles": "static/admin.css"
+		},
+		"authorisation": "wei"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "createTeam"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/wei/createTeam",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"authorisation": "wei"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "updateTeam"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/wei/updateTeam",
+			"method": "POST",
+			"enctype": "urlencoded"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "deleteTeam"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/wei/deleteTeam",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"authorisation": "wei"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getAll"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/wei/getAll"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getOne"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/wei/getOne"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "addMember"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/wei/addMember",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"authorisation": "wei"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "deleteMember"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/wei/deleteMember",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"authorisation": "wei"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getMembers"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/wei/getMembers"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "addScore"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/wei/addScore",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"authorisation": "wei"
+	}],
+	"menu": [{
+		"name": "WEI",
+		"type": "internal",
+		"anchor": "home",
+		"authorisation": {
+			"groups": "wei",
+			"negation": true
+		}
+	}, {
+		"name": "WEI",
+		"type": "submenu",
+		"anchor": [{
+			"name": "WEI",
+			"type": "internal",
+			"anchor": "home"
+		}, {
+			"name": "Administration",
+			"type": "internal",
+			"anchor": "admin"
+		}],
+		"authorisation": "wei"
+	}]
+}

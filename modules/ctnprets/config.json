@@ -1,0 +1,244 @@
+{
+    "description": "Module de gestion des prêts pour CTN",
+    "beta": true,
+    "authorisation": "",
+    "contact": {
+        "firstname": "Raymond",
+        "name": "Deubaze",
+        "phone": "0000000000",
+        "email": "raymond.deubaze@ec-lyon.fr"
+    },
+    "tables": [
+        {
+            "name": "materielCTN",
+            "schema": {
+                "id": "int unsigned primary key not null auto_increment",
+                "image": "varchar(255)",
+                "nom": "varchar(255)",
+                "description": "text",
+                "caution": "smallint(5)",
+                "id_pret": "int"
+            }
+        },
+        {
+            "name": "pretCTN",
+            "schema": {
+                "id": "int unsigned primary key not null auto_increment",
+                "id_materiel": "int",
+                "id_user": "int",
+                "date_debut": "datetime",
+                "date_fin_attendue": "datetime",
+                "date_fin_reelle": "datetime",
+                "moyen_paiement": "tinyint(1)"
+            }
+        }
+    ],
+    "rules": [
+        {
+            "call": {
+                "type": "static",
+                "location": "body/home.html"
+            },
+            "viewport": {
+                "type": "internal",
+                "location": "home"
+            },
+            "includes": {
+                "styles": "static/home.css",
+                "scripts": "static/home.js"
+            }
+        },
+        {
+            "call": {
+                "type": "static",
+                "location": "body/admin.html"
+            },
+            "viewport": {
+                "type": "internal",
+                "location": "admin"
+            },
+            "includes": {
+                "styles": "static/admin.css",
+                "scripts": "static/admin.js"
+            },
+            "authorisation": "ctn"
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "ajoutMateriel"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/ctnprets/ajoutMateriel",
+                "method": "POST",
+                "enctype": "multipart",
+                "options": {
+                    "field": "image"
+                }
+            },
+            "authorisation": "ctn"
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "editionMateriel"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/ctnprets/editionMateriel",
+                "method": "POST",
+                "enctype": "multipart",
+                "options": {
+                    "field": "image"
+                }
+            },
+            "authorisation": "ctn"
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "suppressionMateriel"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/ctnprets/suppressionMateriel",
+                "method": "POST"
+            },
+            "authorisation": "ctn"
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "lectureMateriel"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/ctnprets/lectureMateriel",
+                "method": "GET"
+            }
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "rechercheMateriel"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/ctnprets/rechercheMateriel",
+                "method": "GET"
+            }
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "ajoutPret"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/ctnprets/ajoutPret",
+                "method": "POST"
+            },
+            "authorisation": "ctn"
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "editionPret"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/ctnprets/editionPret",
+                "method": "POST"
+            },
+            "authorisation": "ctn"
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "suppressionPret"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/ctnprets/suppressionPret",
+                "method": "POST"
+            },
+            "authorisation": "ctn"
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "lecturePret"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/ctnprets/lecturePret",
+                "method": "GET"
+            },
+            "authorisation": "ctn"
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "mesPrets"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/ctnprets/mesPrets",
+                "method": "GET"
+            }
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "lectureHistorique"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/ctnprets/lectureHistorique",
+                "method": "GET"
+            },
+            "authorisation": "ctn"
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "suppressionHistorique"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/ctnprets/suppressionHistorique",
+                "method": "POST"
+            },
+            "authorisation": "ctn"
+        }
+    ],
+    "menu": [
+        {
+            "name": "Prêts CTN",
+            "type": "internal",
+            "anchor": "home",
+            "authorisation": {
+                "groups": "ctn",
+                "negation": true
+            }
+        },
+        {
+            "name": "Administration CTN",
+            "type": "submenu",
+            "anchor": [
+                {
+                    "name": "Prêts CTN",
+                    "type": "internal",
+                    "anchor": "home"
+                },
+                {
+                    "name": "Administration",
+                    "type": "internal",
+                    "anchor": "admin"
+                }
+            ],
+            "authorisation": "ctn"
+        }
+    ]
+}

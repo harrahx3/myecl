@@ -1,0 +1,164 @@
+{
+	"description": "Programme de la salle Ciné",
+	"beta": true,
+	"authorisation": "",
+	"contact": {
+		"firstname": "Lucas",
+		"lastname": "Bourtoule",
+		"phone": "0679040698",
+		"email": "lucas.bourtoule@gmail.com"
+	},
+	"tables": [{
+		"name": "clubCine",
+		"schema": {
+			"id": "smallint(5) unsigned primary key not null auto_increment",
+			"image": "varchar(255)",
+			"title": "varchar(255)",
+			"infos": "varchar(255)",
+			"date": "datetime",
+			"synopsis": "text",
+			"active": "tinyint(1)"
+		}
+	}],
+	"rules": [{
+		"call": {
+			"type": "static",
+			"location": "body/home.html"
+		},
+		"viewport": {
+			"type": "internal",
+			"location": "home"
+		},
+		"includes": {
+			"styles": "static/grayscale.css",
+			"scripts": "static/home.js",
+			"misc": {
+				"file": "static/cine.jpg",
+				"location": "cine"
+			}
+		}
+	}, {
+		"call": {
+			"type": "static",
+			"location": "body/admin.html"
+		},
+		"viewport": {
+			"type": "internal",
+			"location": "admin"
+		},
+		"includes": {
+			"styles": "static/admin.css",
+			"scripts": "static/admin.js"
+		},
+		"authorisation": "cine"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getActiveMovies"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/clubcine/getActiveMovies"
+		},
+		"authorisation": "cine"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getInactiveMovies"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/clubcine/getInactiveMovies"
+		},
+		"authorisation": "cine"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getMovie"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/clubcine/getMovie"
+		},
+		"authorisation": "cine"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "toggleMovie"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/clubcine/toggleMovie",
+			"method": "POST"
+		},
+		"authorisation": "cine"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "createMovie"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/clubcine/createMovie",
+			"method": "POST",
+			"enctype": "multipart",
+			"options": {
+				"field": "image"
+			}
+		},
+		"authorisation": "cine"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "updateMovie",
+			"method": "POST",
+			"enctype": "multipart",
+			"options": {
+				"field": "image"
+			}
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/clubcine/updateMovie",
+			"method": "POST",
+			"enctype": "multipart",
+			"options": {
+				"field": "image"
+			}
+		},
+		"authorisation": "cine"
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "deleteMovie"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/clubcine/deleteMovie",
+			"method": "POST"
+		},
+		"authorisation": "cine"
+	}],
+	"menu": [{
+		"name": "Programme ciné",
+		"type": "internal",
+		"anchor": "home",
+		"authorisation": {
+			"groups": "cine",
+			"negation": true
+		}
+	}, {
+		"name": "Club ciné",
+		"type": "submenu",
+		"anchor": [{
+			"name": "Programme ciné",
+			"type": "internal",
+			"anchor": "home"
+		}, {
+			"name": "Administration",
+			"type": "internal",
+			"anchor": "admin"
+		}],
+		"authorisation": "cine"
+	}]
+}

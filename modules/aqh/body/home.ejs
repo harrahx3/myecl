@@ -10,8 +10,7 @@
 <!--<link href="summernote.css" rel="stylesheet">
 <script src="summernote.js"></script>-->
 
-<script src="summernote.min.js"></script>
-<script src="home.js"></script>
+
 <!-- tab list -->
 <ul class="nav nav-pills nav-pills-custom-minimal custom-minimal-bottom" role="tablist">
 
@@ -48,7 +47,7 @@
         		<div class="form-group">
         			<div class="col-md-12">
         				<div class="summernote" id="content<%=event.id%>"></div>
-        				<input type="hidden" name="curfcn rent" id="current" value="-1">
+        				<input type="hidden" name="curfcn rent" id="current" value="-1" />
         			</div>
         		</div>
 
@@ -90,7 +89,7 @@
 
                 <%# print comment in bootstrap collapse object %>
                 <p><button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapse<%=event.posts[i].id%>" aria-expanded="false" aria-controls="collapseExample">
-                  <%=event.posts[i].comments.length%> <%= event.posts[i].comments.length>=2 ? "commentaires" : "commentaire" %>
+                  <%=event.posts[i].comments.length%> <%= event.posts[i].comments.length >= 2 ? "commentaires" : "commentaire" %>
                 </button></p>
                 <div class="collapse" id="collapse<%=event.posts[i].id%>">
                   <div class="col-md-offset-1 col-md-8">

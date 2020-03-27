@@ -1,0 +1,103 @@
+{
+	"description": "Page de profil pour consultation et édition",
+	"authorisation": "",
+	"beta": true,
+	"contact": {
+		"firstname": "Alexandre",
+		"lastname": "Magueresse",
+		"phone": "0679040698",
+		"email": "alexandre.magueresse@gmail.com"
+	},
+	"tables": [],
+	"includes": {},
+	"rules": [{
+		"call": {
+			"type": "callback",
+			"location": "save"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/profile/save",
+			"method": "POST"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "savePassword"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/profile/savePassword",
+			"method": "POST"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "deleteImage"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/profile/deleteImage",
+			"method": "POST"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "updateImage"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/profile/updateImage",
+			"method": "POST",
+			"enctype": "urlencoded",
+			"options": {
+				"extended": true,
+				"parameterLimit": 50000,
+				"limit": "50mb"
+			}
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "search"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/profile/search"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "load"
+		},
+		"viewport": {
+			"type": "internal",
+			"location": "profile/:id"
+		},
+		"includes": {
+			"styles": [
+				"static/croppie.css",
+				"static/style.css"
+			],
+			"scripts": [
+				"static/croppie.min.js",
+				"static/modal.js",
+				"static/script.js"
+			],
+			"misc": [{
+				"file": "static/avatar.png",
+				"location": "avatar"
+			}]
+		}
+	}],
+	"header": [{
+		"icon": "<i class='fas fa-user'></i>",
+		"type": "internal",
+		"anchor": "profile/-1"
+	}],
+	"menu": [{
+		"name": "Mon profil",
+		"type": "internal",
+		"anchor": "profile/-1"
+	}]
+}

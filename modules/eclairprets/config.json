@@ -1,0 +1,244 @@
+{
+    "description": "Module de gestion des prêts Éclair",
+    "beta": true,
+    "authorisation": "",
+    "contact": {
+        "firstname": "Raymond",
+        "lastname": "Deubaze",
+        "phone": "0000000000",
+        "email": "raymond.deubaze@ec-lyon.fr"
+    },
+    "tables": [
+        {
+            "name": "materielEclair",
+            "schema": {
+                "id": "int unsigned primary key not null auto_increment",
+                "nom": "varchar(255)",
+                "description": "text",
+                "image": "varchar(255)",
+                "caution": "smallint(5)",
+                "id_pret": "int"
+            }
+        },
+        {
+            "name": "pretEclair",
+            "schema": {
+                "id": "int unsigned primary key not null auto_increment",
+                "id_materiel": "int",
+                "id_user": "int",
+                "date_debut": "datetime",
+                "date_fin_attendue": "datetime",
+                "date_fin_reelle": "datetime",
+                "moyen_paiement": "tinyint(1)"
+            }
+        }
+    ],
+    "rules": [
+        {
+            "call": {
+                "type": "static",
+                "location": "body/home.html"
+            },
+            "viewport": {
+                "type": "internal",
+                "location": "home"
+            },
+            "includes": {
+                "scripts": "static/home.js",
+                "styles": "static/home.css"
+            }
+        },
+        {
+            "call": {
+                "type": "static",
+                "location": "body/admin.html"
+            },
+            "viewport": {
+                "type": "internal",
+                "location": "admin"
+            },
+            "includes": {
+                "scripts": "static/admin.js",
+                "styles": "static/admin.css"
+            },
+            "authorisation": "eclair"
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "ajoutMateriel"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/eclairprets/ajoutMateriel",
+                "method": "POST",
+                "enctype": "multipart",
+                "options": {
+                    "field": "image"
+                }
+            },
+            "authorisation": "eclair"
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "editionMateriel"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/eclairprets/editionMateriel",
+                "method": "POST",
+                "enctype": "multipart",
+                "options": {
+                    "field": "image"
+                }
+            },
+            "authorisation": "eclair"
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "suppressionMateriel"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/eclairprets/suppressionMateriel",
+                "method": "POST"
+            },
+            "authorisation": "eclair"
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "lectureMateriel"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/eclairprets/lectureMateriel",
+                "method": "GET"
+            }
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "rechercheMateriel"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/eclairprets/rechercheMateriel",
+                "method": "GET"
+            }
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "ajoutPret"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/eclairprets/ajoutPret",
+                "method": "POST"
+            },
+            "authorisation": "eclair"
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "editionPret"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/eclairprets/editionPret",
+                "method": "POST"
+            },
+            "authorisation": "eclair"
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "suppressionPret"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/eclairprets/suppressionPret",
+                "method": "POST"
+            },
+            "authorisation": "eclair"
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "lecturePret"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/eclairprets/lecturePret",
+                "method": "GET"
+            },
+            "authorisation": "eclair"
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "mesPrets"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/eclairprets/mesPrets",
+                "method": "GET"
+            }
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "lectureHistorique"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/eclairprets/lectureHistorique",
+                "method": "GET"
+            },
+            "authorisation": "eclair"
+        },
+        {
+            "call": {
+                "type": "callback",
+                "location": "supprimerHistorique"
+            },
+            "viewport": {
+                "type": "external",
+                "location": "/module/eclairprets/supprimerHistorique",
+                "method": "POST"
+            },
+            "authorisation": "eclair"
+        }
+    ],
+    "menu": [
+        {
+            "name": "Prêts Éclair",
+            "type": "internal",
+            "location": "home",
+            "authorisation": {
+                "groups": "eclair",
+                "negation": true
+            }
+        },
+        {
+            "name": "Administration prêts Éclair",
+            "type": "submenu",
+            "location": [
+                {
+                    "name": "Administration",
+                    "type": "internal",
+                    "location": "admin"
+                },
+                {
+                    "name": "Prêts Éclair",
+                    "type": "internal",
+                    "location": "home"
+                }
+            ],
+            "authorisation": "eclair"
+        }
+    ]
+}

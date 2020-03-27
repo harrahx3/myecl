@@ -1,0 +1,105 @@
+{
+	"description": "Service de réservation de salles",
+	"authorisation": "",
+	"beta": true,
+	"contact": {
+		"firstname": "Tanguy",
+		"lastname": "Houget",
+		"phone": "",
+		"email": "tanguy.houget@gmail.com"
+	},
+	"tables": [{
+		"name": "ResourceReservationBDE",
+		"schema": {
+			"id": "INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT",
+			"name": "VARCHAR(255)"
+		}
+	}, {
+		"name": "ReservationBDE",
+		"schema": {
+			"id": "INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT",
+			"beginning": "VARCHAR(24)",
+			"ending": "VARCHAR(24)",
+			"title": "VARCHAR(255)",
+			"description": "TEXT",
+			"resource_id": "INTEGER",
+			"user_id": "INTEGER"
+		}
+	}, {
+		"name": "AuthorisationReservationBDE",
+		"schema": {
+			"resource_id": "INTEGER",
+			"group_id": "INTEGER"
+		}
+	}],
+	"rules": [{
+		"call": {
+			"type": "static",
+			"location": "body/main.html"
+		},
+		"viewport": {
+			"type": "internal",
+			"location": "main"
+		},
+		"includes": {
+			"scripts": "static/main.js",
+			"styles": "static/main.css"
+		}
+	}, {
+		"call": {
+			"type": "static",
+			"location": "body/reservation.html"
+		},
+		"viewport": {
+			"type": "internal",
+			"location": "reservation"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getResourcesReservations"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/reservations/resourcesReservation"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "addReservation"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/reservations/add",
+			"method": "POST",
+			"enctype": "urlencoded"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "updateReservation"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/reservations/update",
+			"method": "POST",
+			"enctype": "urlencoded"
+		}
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "deleteReservation"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/reservations/delete",
+			"method": "POST",
+			"enctype": "urlencoded"
+		}
+	}],
+	"menu": [{
+		"name": "Réservation BDE",
+		"type": "internal",
+		"anchor": "main"
+	}]
+}

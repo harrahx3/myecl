@@ -1,0 +1,125 @@
+{
+	"description": "Module d'administration des groupes et des utilisateurs",
+	"authorisation": "admin",
+	"beta": false,
+	"contact": "",
+	"tables": [],
+	"rules": [{
+		"call": {
+			"type": "callback",
+			"location": "allGroups"
+		},
+		"viewport": {
+			"type": "internal",
+			"location": "home"
+		},
+		"includes": {
+			"styles": [
+				"static/style.css"
+			],
+			"scripts": [
+				"static/script.js"
+			]
+		},
+		"authorisation": ""
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "oneGroup"
+		},
+		"viewport": {
+			"type": "internal",
+			"location": "group/:id"
+		},
+		"includes": {
+			"scripts": "static/group.js"
+		},
+		"authorisation": ""
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "createGroup"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/admin/createGroup",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"includes": {},
+		"authorisation": ""
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "deleteGroup"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/admin/deleteGroup",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"includes": {},
+		"authorisation": ""
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "updateGroup"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/admin/updateGroup",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"includes": {},
+		"authorisation": ""
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "searchUser"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/admin/searchUser"
+		},
+		"includes": {},
+		"authorisation": ""
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "addMember"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/admin/addMember",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"includes": {},
+		"authorisation": ""
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "removeMember"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/admin/removeMember",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"includes": {},
+		"authorisation": ""
+	}],
+	"header": [{
+		"icon": "<i class='fas fa-cogs'></i>",
+		"type": "internal",
+		"anchor": "home"
+	}],
+	"menu": [{
+		"name": "Administration",
+		"type": "internal",
+		"anchor": "home"
+	}]
+}
