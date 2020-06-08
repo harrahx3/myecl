@@ -41,7 +41,8 @@ const makeMenu = (menu, data, moduleName = "") => {
 			menu.append(link);
 		}
 	}
-}
+};
+
 
 $(document).on('click', '.js-sub-menu-toggle', function () {
 	if ($(this).next().hasClass('close')) {
@@ -81,7 +82,7 @@ const makeHeader = (header, data) => {
 			header.append(link);
 		}
 	}
-}
+};
 
 const relocate = (type, moduleName, location) => {
 	$.post('/userLocate', {
@@ -89,7 +90,7 @@ const relocate = (type, moduleName, location) => {
 		location: location,
 		moduleName: moduleName
 	}).done(makeWall);
-}
+};
 
 const makeWall = () => {
 	const body = $('#main-content-wrapper');
@@ -169,7 +170,7 @@ const makeWall = () => {
 			body.html('');
 		}
 	});
-}
+};
 
 $(document).ready(function () {
 	$.get('/menu', (data) => {

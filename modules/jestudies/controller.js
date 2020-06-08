@@ -1,8 +1,10 @@
+/* jshint esversion:6*/
+
 exports.getAllAdmin = function (req, res) {
 	var data = {};
 	data.studies = [];
 
-	var promises = [];
+	var promises = []
 	req.database.query('SELECT * FROM je_studies', function (error, result) {
 		if (error) {
 			req.logger.error(error);

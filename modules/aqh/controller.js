@@ -1,3 +1,5 @@
+/* jshint esversion:6*/
+
 exports.addComment = function (req, res) {
 	console.log("addComment");
 	req.database.query('INSERT INTO AQHcomments (content, date, author, postid) VALUES (?, NOW(), ?, ?);', [req.body.content, req.user.id, req.body.postid], (error, result) => {
@@ -7,7 +9,7 @@ exports.addComment = function (req, res) {
 			res.sendStatus(200);
 		}
 	});
-}
+};
 
 exports.getAllEvents = function (req, res) {
 	console.log("getAllEvents");

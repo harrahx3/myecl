@@ -80,3 +80,26 @@ exports.delete = function (req, res) {
 		}
 	});
 };
+
+exports.getGroups = function (req, res){
+	console.log("getGroups");
+	//console.log(req);
+	//console.log(res);
+	//req.database.query("SELECT id, name, description FROM core_group;"), [], (error, result) => {
+		req.database.query('SELECT id, name, description FROM core_group', [], (error, result) => {
+			if (error) {
+				req.log.error(error);
+				res.sendStatus(500);
+			} else {
+				var events = [];
+				for (let key in result) {
+					events.push({
+						id: result[key]['id'],
+						name: result[key]['name'],
+						description: result[key]['description'],
+					});
+				}
+				res.send(events);
+			}
+		});
+};

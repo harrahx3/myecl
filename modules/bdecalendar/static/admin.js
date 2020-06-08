@@ -1,3 +1,19 @@
+$.get('/module/bdecalendar/getGroups', {}, (result) => {
+	console.log("ad");
+	console.log(result);
+	var nodeOrga = document.getElementById("organisation");
+	nodeOrga.innerHTML = '';
+	for (var key in result) {
+		var node = document.createElement("OPTION");
+		node.setAttribute("value", result[key]["id"]);
+		node.setAttribute("label", result[key]["name"]);
+		var textnode = document.createTextNode(result[key]["name"]+" ("+result[key]["description"]+")");         // Create a text node
+		node.appendChild(textnode);
+		nodeOrga.appendChild(node);
+	}
+});
+
+
 $("#calendar").fullCalendar({
 	header: {
 		left: 'month, basicWeek', //agendaWeek

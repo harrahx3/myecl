@@ -18,11 +18,22 @@
 			"end": "DATETIME",
 			"location": "VARCHAR(255)",
 			"organisation": "VARCHAR(255)",
-			"target": "VARCHAR(255)"
+			"target": "VARCHAR(255)",
+			"organisationid": "INT",
+			"targetid": "INT"
 		}
 	}],
 	"includes": {},
 	"rules": [{
+		"call": {
+			"type": "callback",
+			"location": "getGroups"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/bdecalendar/getGroups"
+		}
+	}, {
 		"call": {
 			"type": "static",
 			"location": "body/home.html"
