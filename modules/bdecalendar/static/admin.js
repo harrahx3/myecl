@@ -146,6 +146,7 @@ $(document).on('click', '#addEvent', function (e) {
 		relocate('internal', 'bdecalendar', 'admin');
 	});
 });
+
 $(document).on('click', '#deleteEvent', function (e) {
 	e.preventDefault();
 	$.post('/module/bdecalendar/delete', {

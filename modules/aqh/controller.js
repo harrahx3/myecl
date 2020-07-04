@@ -18,7 +18,7 @@ exports.getAllEvents = function (req, res) {
 
 	//get all events
 //	req.database.query('SELECT e.id as id, e.description as content, e.start as date, e.organisationid as author, e.title as title FROM BDECalendar AS e ORDER BY e.start DESC;', (error, result) => {
-		req.database.query('SELECT t.id as id, t.content as content, DATE_FORMAT(t.date, "%W %D %b %Y") as date, t.organisationid as author, t.title as title, t.id_user as miduser, g.name AS organisateur FROM (SELECT e.id as id, e.description as content, e.start as date, e.organisationid as organisationid, e.title as title, m.id_user as id_user FROM BDECalendar AS e JOIN core_membership AS m ON e.organisationid=m.id_group) AS t JOIN core_group AS g ON t.organisationid=g.id ORDER BY date DESC;', (error, result) => {
+		req.database.query('SELECT t.id as id, t.content as content, DATE_FORMAT(t.date, "%W %D %b %Y") as date, t.organisationid as author, t.title as title, t.id_user as miduser, g.name AS organisateur, DATE_FORMAT(t.start, "%W %D %b %Y") AS start, DATE_FORMAT(t.end, "%W %D %b %Y") AS end, t.description AS description, t.location AS location FROM (SELECT e.id as id, e.description as content, e.end as date, e.organisationid as organisationid, e.title as title, m.id_user as id_user, e.start AS start, e.end AS end, e.description AS description, e.location AS location FROM BDECalendar AS e JOIN core_membership AS m ON e.organisationid=m.id_group) AS t JOIN core_group AS g ON t.organisationid=g.id ORDER BY start DESC;', (error, result) => {
 
 		if (error) {
 			req.logger.error(error);
@@ -42,6 +42,10 @@ exports.getAllEvents = function (req, res) {
 						author: result[i]['author'],
 						admin: admin,
 						organisateur: result[i]['organisateur'],
+						start: result[i]['start'],
+						end: result[i]['end'],
+						description: result[i]['description'],
+						location: result[i]['location'],
 						posts: []
 					};
 					var add=true;
@@ -244,11 +248,18 @@ exports.update = function (req, res) {
 };
 
 exports.delete = function (req, res) {
-	req.database.query('DELETE FROM AQHposts WHERE id = ?;', [req.body.id], (error, result) => {
+	req.database.query('DELETE FROM AQHcomments WHERE postid = ?', [req.body.id], (error, result) => {
 		if (error) {
 			req.logger.error(error);
-		} else {
-			res.sendStatus(200);
+		}
+		else {
+			req.database.query('DELETE FROM AQHposts WHERE id = ?;', [req.body.id], (error, result) => {
+				if (error) {
+					req.logger.error(error);
+				} else {
+					res.sendStatus(200);
+				}
+			});
 		}
 	});
 };

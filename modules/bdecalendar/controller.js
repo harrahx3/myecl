@@ -71,6 +71,54 @@ exports.add = function (req, res) {
 };
 
 exports.delete = function (req, res) {
+
+	req.database.query('SELECT id FROM AQHposts WHERE eventid = ?', [parseInt(req.body.id)], (error, result) => {
+		if (error) {
+			req.logger.error(error);
+			res.sendStatus(500);
+		}
+		else {
+			var posts = [];
+			for (let key in result) {
+				posts.push(
+					 result[key]['id']
+				);
+			}
+
+			if (posts.length) {
+
+				req.database.query("DELETE FROM AQHcomments WHERE postid IN (?)", [posts], (error, result) => {
+					if (error) {
+						req.logger.error(error);
+						res.sendStatus(500);
+					}
+
+					else {
+						req.database.query("DELETE FROM AQHposts WHERE id IN (?)", [posts], (error, result) => {
+							if (error) {
+								req.logger.error(error);
+								res.sendStatus(500);
+							}
+
+						});
+
+					}
+
+				});
+
+			}
+
+		}
+	});
+
+	/*req.database.query("DELETE FROM AQHposts WHERE eventid = ?", [parseInt(req.body.id)], (error, result) => {
+		if (error) {
+			req.logger.error(error);
+			req.sendStatus(500);
+		}
+	});
+	*/
+
 	req.database.query("DELETE FROM BDECalendar WHERE id = ?;", [parseInt(req.body.id)], (error, result) => {
 		if (error) {
 			req.logger.error(error);
