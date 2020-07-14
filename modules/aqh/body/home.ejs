@@ -66,7 +66,7 @@
 
             <div class="form-group">
               <div class="col-sm-4 col-sm-offset-4">
-                <button class="btn btn-primary btn-block add" id="<%=event.id%>" type="submit">Ajouter</button>
+                <button class="btn btn-primary btn-block addPost" id="<%=event.id%>" type="submit">Ajouter</button>
               </div>
             </div>
 
@@ -96,7 +96,7 @@
                     <%# admin can delete and edit post %>
                     <% if (event.admin) { %>
                       <td><button class='btn btn-primary edit' id="<%=event.posts[i].id%>">Editer</button></td>
-                      <td><button class='btn btn-danger delete' id="<%=event.posts[i].id%>">Supprimer</button></td>
+                      <td><button class='btn btn-danger deletePost' id="<%=event.posts[i].id%>">Supprimer</button></td>
                     <% } %>
                   </tr>
                 </h4>

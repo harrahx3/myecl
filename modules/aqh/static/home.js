@@ -26,9 +26,9 @@ $(document).ready(function () {
 	});
 });
 
-$(document).on('click', '.delete', function () {
+$(document).on('click', '.deletePost', function () {
 	var id = $(this).attr('id');
-	$.post('/module/aqh/delete', {
+	$.post('/module/aqh/deletePost', {
 		id: id
 	}, (result) => {
 		$(".summernote").code('<p><br></p>');
@@ -65,10 +65,10 @@ $(document).on('click', '.edit', function () {
 	});
 });
 
-$(".add").click(function (e) {
+$(".addPost").click(function (e) {
 //$(document).on('click', '.add', function () {
 
-	console.log("click add button");
+	console.log("click add Post button");
 	e.preventDefault();
 
 	var post_id = 0;
@@ -90,7 +90,7 @@ $(".add").click(function (e) {
 		});
 		$("#current").val(-1);
 	} else {
-		$.post('/module/aqh/add', {
+		$.post('/module/aqh/addPost', {
 			content: content,
 			eventid: event_id
 		});
