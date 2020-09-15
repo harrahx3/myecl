@@ -43,7 +43,8 @@
 						<br><small>(AAAA-MM-JJ HH:MM)</small>
 					</label>
 					<div class="col-sm-7">
-						<input type="text" id="start" name="start" class="form-control" />
+						<!-- <input type="text" id="start" name="start" class="form-control" /> -->
+					<input type="date" id="start" name="start" class="form-control" placeholder="select start date" >
 					</div>
 				</div>
 
@@ -52,15 +53,21 @@
 						<br><small>(AAAA-MM-JJ HH:MM)</small>
 					</label>
 					<div class="col-sm-7">
-						<input type="text" id="end" name="end" class="form-control" />
+						<!--	<input type="text" id="end" name="end" class="form-control" /> -->
+								<input type="date" id="end" name="end" class="form-control" placeholder="select end date" >
 					</div>
 				</div>
 
 				<div class="form-group">
-					<label class="control-label col-sm-5" for="organisation">Organisateur (id du group)</label>
+					<label class="control-label col-sm-5" for="organisation">Organisateur</label>
 					<div class="col-sm-7">
-						<input type="text" id="organisation" name="organisation" class="form-control" />
-					</div>
+						 <select class="form-control" id="organisation" name="organisation">
+						 </select>
+					 </div>
+					 <!--	<div class="col-sm-7">
+							 <input type="text" id="organisation" name="organisation" class="form-control" />
+						 </div>
+						 -->
 				</div>
 
 				<div class="form-group">

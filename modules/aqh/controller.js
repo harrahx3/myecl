@@ -10,7 +10,7 @@ exports.addComment = function (req, res) {
 }
 
 exports.getAllEvents = function (req, res) {
-	console.log("getAllEvents");
+
 	req.database.query("SET lc_time_names = 'fr_FR';", (errorl, resultl) => {
 //});
 
@@ -46,8 +46,6 @@ exports.getAllEvents = function (req, res) {
 						location: result[i]['location'],
 						posts: []
 					};
-					console.log("event");
-					console.log(event);
 					var add=true;
 					for (var j in data.events) {
 						if (data.events[j].id==event.id) {
@@ -176,7 +174,7 @@ exports.getOne = function (req, res) {
 	});
 };
 
-exports.getAll = function (req, res) {
+/*exports.getAll = function (req, res) {
 	req.database.query('SELECT p.id as id, p.content as content, p.date as date, u.nick as author FROM AQHposts AS p JOIN core_user AS u ON u.id = p.author ORDER BY p.date DESC;', (error, result) => {
 		if (error) {
 			req.logger.error(error);
@@ -198,9 +196,9 @@ exports.getAll = function (req, res) {
 			res.json(data);
 		}
 	});
-};
+};*/
 
-exports.getAllFrom = function (req, res) {
+/*exports.getAllFrom = function (req, res) {
 	req.database.query('SELECT p.id as id, p.content as content, p.date as date, u.nick as author FROM AQHposts AS p JOIN core_user AS u ON u.id = p.author WHERE p.author=? ORDER BY p.date DESC;', [req.user.id], (error, result) => {
 		if (error) {
 			req.logger.error(error);
@@ -222,11 +220,11 @@ exports.getAllFrom = function (req, res) {
 			res.json(data);
 		}
 	});
-};
+};*/
 
 
-exports.add = function (req, res) {
-	console.log("add");
+exports.addPost = function (req, res) {
+	console.log("addPost");
 	req.database.query('INSERT INTO AQHposts (content, date, author, eventid) VALUES (?, NOW(), ?, ?);', [req.body.content, req.user.id, req.body.eventid], (error, result) => {
 		if (error) {
 			req.logger.error(error);
@@ -247,12 +245,19 @@ exports.update = function (req, res) {
 	});
 };
 
-exports.delete = function (req, res) {
-	req.database.query('DELETE FROM AQHposts WHERE id = ?;', [req.body.id], (error, result) => {
+exports.deletePost = function (req, res) {
+	req.database.query('DELETE FROM AQHcomments WHERE postid = ?', [req.body.id], (error, result) => {
 		if (error) {
 			req.logger.error(error);
-		} else {
-			res.sendStatus(200);
+		}
+		else {
+			req.database.query('DELETE FROM AQHposts WHERE id = ?;', [req.body.id], (error, result) => {
+				if (error) {
+					req.logger.error(error);
+				} else {
+					res.sendStatus(200);
+				}
+			});
 		}
 	});
 };
@@ -267,7 +272,7 @@ exports.deleteComment = function (req, res) {
 	});
 };
 
-exports.getALLData = function (req, res) {
+/*exports.getALLData = function (req, res) {
 	req.database.query('\
 		SELECT p.id, p.content, c.author, c.content FROM core_users AS u \
 		JOIN (\
@@ -296,9 +301,9 @@ exports.getALLData = function (req, res) {
 			res.json(data);
 		}
 	});
-};
+};*/
 
-exports.getComments = function (req, res) {
+/*exports.getComments = function (req, res) {
 	req.database.query('SELECT c.id as id, c.content as content, c.date as date, c.author as author FROM AQHcomments AS c JOIN AQHposts AS p ON c.postid = p.id  ORDER BY p.date DESC;', (error, result) => {
 		if (error) {
 			req.logger.error(error);
@@ -320,9 +325,9 @@ exports.getComments = function (req, res) {
 			res.json(data);
 		}
 	});
-};
+};*/
 
-exports.getPostComments = function (req, res) {
+/*exports.getPostComments = function (req, res) {
 	console.log("getPostComments");
 	req.database.query('SELECT c.id as id, c.content as content, c.date as date, c.author as author FROM AQHcomments AS c JOIN AQHposts AS p ON c.postid = p.id WHERE p.id=? ORDER BY p.date DESC;', [req.body.postid], (error, result) => {
 		if (error) {
@@ -345,10 +350,10 @@ exports.getPostComments = function (req, res) {
 			res.json(data);
 		}
 	});
-};
+};*/
 
 
-exports.getPostsForEvent = function (req, res) {
+/*exports.getPostsForEvent = function (req, res) {
 	console.log("getPostsForEvent");
 	req.database.query('SELECT p.id as id, p.content as content, p.date as date, p.author as author FROM AQHposts AS p JOIN AQHevents AS e ON p.eventid = e.id WHERE e.id=? ORDER BY p.date DESC;', [req.body.eventid], (error, result) => {
 		if (error) {
@@ -371,7 +376,7 @@ exports.getPostsForEvent = function (req, res) {
 			res.json(data);
 		}
 	});
-};
+};*/
 
 
 // get the list of all events in BDECalendar with all posts associated to each one

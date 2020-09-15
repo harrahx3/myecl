@@ -71,6 +71,54 @@ exports.add = function (req, res) {
 };
 
 exports.delete = function (req, res) {
+
+	req.database.query('SELECT id FROM AQHposts WHERE eventid = ?', [parseInt(req.body.id)], (error, result) => {
+		if (error) {
+			req.logger.error(error);
+			res.sendStatus(500);
+		}
+		else {
+			var posts = [];
+			for (let key in result) {
+				posts.push(
+					 result[key]['id']
+				);
+			}
+
+			if (posts.length) {
+
+				req.database.query("DELETE FROM AQHcomments WHERE postid IN (?)", [posts], (error, result) => {
+					if (error) {
+						req.logger.error(error);
+						res.sendStatus(500);
+					}
+
+					else {
+						req.database.query("DELETE FROM AQHposts WHERE id IN (?)", [posts], (error, result) => {
+							if (error) {
+								req.logger.error(error);
+								res.sendStatus(500);
+							}
+
+						});
+
+					}
+
+				});
+
+			}
+
+		}
+	});
+
+	/*req.database.query("DELETE FROM AQHposts WHERE eventid = ?", [parseInt(req.body.id)], (error, result) => {
+		if (error) {
+			req.logger.error(error);
+			req.sendStatus(500);
+		}
+	});
+	*/
+
 	req.database.query("DELETE FROM BDECalendar WHERE id = ?;", [parseInt(req.body.id)], (error, result) => {
 		if (error) {
 			req.logger.error(error);
@@ -79,4 +127,27 @@ exports.delete = function (req, res) {
 			res.sendStatus(200);
 		}
 	});
+};
+
+exports.getGroups = function (req, res){
+	console.log("getGroups");
+	//console.log(req);
+	//console.log(res);
+	//req.database.query("SELECT id, name, description FROM core_group;"), [], (error, result) => {
+		req.database.query('SELECT id, name, description FROM core_group', [], (error, result) => {
+			if (error) {
+				req.log.error(error);
+				res.sendStatus(500);
+			} else {
+				var events = [];
+				for (let key in result) {
+					events.push({
+						id: result[key]['id'],
+						name: result[key]['name'],
+						description: result[key]['description'],
+					});
+				}
+				res.send(events);
+			}
+		});
 };

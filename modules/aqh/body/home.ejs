@@ -85,7 +85,7 @@ function formatDatetime(d) {
 
         		<div class="form-group">
         			<div class="col-sm-4 col-sm-offset-4">
-        				<button class="btn btn-primary btn-block add" id="<%=event.id%>" type="submit">Ajouter</button>
+        				<button class="btn btn-primary btn-block addPost" id="<%=event.id%>" type="submit">Ajouter</button>
         			</div>
         		</div>
 
@@ -98,7 +98,7 @@ function formatDatetime(d) {
 
           <!-- if there is no posts for this event -->
           <% if (event.posts.length==0) { %>
-            <h3>Pas enore de posts pour cet événement</h3>
+            <h3>Pas encore de postes pour cet événement</h3>
           <% } %>
 
 
@@ -114,7 +114,7 @@ function formatDatetime(d) {
                     <%# admin can delete and edit post %>
                     <% if (event.admin) { %>
                       <td><button class='btn btn-primary edit' id="<%=event.posts[i].id%>">Editer</button></td>
-                      <td><button class='btn btn-danger delete' id="<%=event.posts[i].id%>">Supprimer</button></td>
+                      <td><button class='btn btn-danger deletePost' id="<%=event.posts[i].id%>">Supprimer</button></td>
                     <% } %>
                   </tr>
                 </h4>

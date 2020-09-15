@@ -91,11 +91,11 @@
 	}, {
 		"call": {
 			"type": "callback",
-			"location": "add"
+			"location": "addPost"
 		},
 		"viewport": {
 			"type": "external",
-			"location": "/module/aqh/add",
+			"location": "/module/aqh/addPost",
 			"method": "POST",
 			"enctype": "urlencoded"
 		},
@@ -127,11 +127,11 @@
 	}, {
 		"call": {
 			"type": "callback",
-			"location": "delete"
+			"location": "deletePost"
 		},
 		"viewport": {
 			"type": "external",
-			"location": "/module/aqh/delete",
+			"location": "/module/aqh/deletePost",
 			"method": "POST",
 			"enctype": "urlencoded"
 		},
