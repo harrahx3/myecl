@@ -16,7 +16,7 @@ exports.getAllEvents = function (req, res) {
 
 	//get all events
 //	req.database.query('SELECT e.id as id, e.description as content, e.start as date, e.organisationid as author, e.title as title FROM BDECalendar AS e ORDER BY e.start DESC;', (error, result) => {
-		req.database.query('SELECT t.id as id, t.content as content, DATE_FORMAT(t.date, "%W %D %b %Y") as date, t.organisationid as author, t.title as title, t.id_user as miduser, g.name AS organisateur FROM (SELECT e.id as id, e.description as content, e.start as date, e.organisationid as organisationid, e.title as title, m.id_user as id_user FROM BDECalendar AS e JOIN core_membership AS m ON e.organisationid=m.id_group) AS t JOIN core_group AS g ON t.organisationid=g.id ORDER BY date DESC;', (error, result) => {
+		req.database.query('SELECT t.id as id, t.content as content, t.location as location, DATE_FORMAT(t.date, "%W %D %b %Y") as date, DATE_FORMAT(t.start, "%W %D %b %Y") as start, DATE_FORMAT(t.end, "%W %D %b %Y") as end, t.organisationid as author, t.title as title, t.id_user as miduser, g.name AS organisateur FROM (SELECT e.id as id, e.description as content, e.start as date, e.start as start, e.end as end, e.organisationid as organisationid, e.title as title, e.location as location, m.id_user as id_user FROM BDECalendar AS e JOIN core_membership AS m ON e.organisationid=m.id_group) AS t JOIN core_group AS g ON t.organisationid=g.id ORDER BY date DESC;', (error, result) => {
 
 		if (error) {
 			req.logger.error(error);
@@ -31,6 +31,7 @@ exports.getAllEvents = function (req, res) {
 				for (let i in result) {
 				//	console.log(result);
 					//console.log(result[i]);
+
 					var admin = (result[i]['miduser'] == req.user.id);
 					var event={
 						id: result[i]['id'],
@@ -40,8 +41,13 @@ exports.getAllEvents = function (req, res) {
 						author: result[i]['author'],
 						admin: admin,
 						organisateur: result[i]['organisateur'],
+						start: result[i]['start'],
+						end: result[i]['end'],
+						location: result[i]['location'],
 						posts: []
 					};
+					console.log("event");
+					console.log(event);
 					var add=true;
 					for (var j in data.events) {
 						if (data.events[j].id==event.id) {

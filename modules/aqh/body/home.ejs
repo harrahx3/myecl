@@ -1,5 +1,16 @@
 <%#Code ejs qui génére coté serveur un code html à partir d'un objet data qui contient les events %>
 
+<%
+function formatDatetime(d) {
+  var year = d.getFullYear();
+  var month = d.getMonth() + 1;
+  var day = d.getDay();
+  var hour = d.getHours();
+  var minutes = d.getMinutes();
+  return [day, month, year].join('/') + ' ' + [hour, minutes].join(':');
+}
+%>
+
 
 <!--include libraries(jQuery, bootstrap) -->
 <!--<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -33,13 +44,34 @@
 
   <!-- first tab: presentation -->
   <div id="presentation" class="tab-pane"> <!--  active in"> -->
-    <p>module aqh</p>
+
+    <div class="jumbotron">
+      <h1 class="display-4">AQH</h1>
+      <p class="lead"> A quelle heure ?</p>
+      <hr class="my-4">
+      <p>Posts info associatif</p>
+      <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+    </div>
+
   </div>
 
   <!-- tab for all events in BDECalendar -->
   <% for (event of events) { %>
 
-    <div id="event<%= event.id %>" class="tab-pane fade">
+    <div id="event<%= event.id %>" class="tab-pane fade" >
+
+
+
+      <div class='col-md-6 col-md-offset-3'>
+        <p class='text-center'>
+          <span class='lead'> <%=event.title %></span><br>
+          <span><i> <%=event.content%> </i></span>
+        </p>
+         <p class='text-center'>
+           <span>Du  <%=event.start%> au <%=event.end%> </span><br>
+           <span>Organisateur : <%=event.organisateur%> &emsp;&ensp;Lieu : <%=event.location%> </span>
+         </p>
+       </div>
 
       <% if (event.admin) { %>
         <div class="col-md-offset-2 col-md-8">
@@ -62,21 +94,22 @@
       <% } %>
 
 
-  		<div  class="col-md-offset-2 col-md-8">
+  		<div  class="col-md-offset-2 col-md-8" style="background-color: #FFFFFF;">
 
           <!-- if there is no posts for this event -->
           <% if (event.posts.length==0) { %>
             <h3>Pas enore de posts pour cet événement</h3>
           <% } %>
 
-          <!-- print all posts in bootstrap media object-->
-          <%  for (let i in event.posts) { %>
 
-            <div class="media">
-              <div class="media-body">
+          <!-- print all posts in bootstrap media object-->
+            <%  for (let i in event.posts) { %>
+
+            <div class="media" style="padding: 1em;">
+              <div class="media-body" style="padding: 1em; background-color : #EEEEEE;">
                 <h4 class="mt-0">
                   <tr>
-                    <td><p>Post de <%-event.posts[i].author%> le <%-event.posts[i].date%></p></td>
+                    <td><p style="font-weight: bold;">Post de <%-event.posts[i].author%> le <%-event.posts[i].date%></p></td>
 
                     <%# admin can delete and edit post %>
                     <% if (event.admin) { %>
@@ -93,9 +126,9 @@
                 </button></p>
                 <div class="collapse" id="collapse<%=event.posts[i].id%>">
                   <div class="col-md-offset-1 col-md-8">
-                    <div class="card card-body">
+                    <ul class="list-unstyled">
                       <% for (let j in event.posts[i].comments) { %>
-                        <div class="media">
+                        <li class="media">
                           <div class="media-body">
                             <h5 class="mt-0">
                               <%=event.posts[i].comments[j].author%> le <%=event.posts[i].comments[j].date%>
@@ -105,14 +138,14 @@
                             </h5>
                             <p><%= event.posts[i].comments[j].content %></p>
                           </div>
-                        </div>
+                        </li>
                       <% } %>
 
                       <form>
                         <textarea name="newcomment" id="newcomment<%=event.posts[i].id%>"></textarea>
                         <button class="btn btn-primary addComment" id="<%=event.posts[i].id%>" type="submit">Commenter</button>
                       </form>
-                    </div>
+                    </ul>
                   </div>
                 </div>
 
@@ -120,6 +153,8 @@
             </div>
 
           <% } %>
+
+
       </div>
     </div>
 
