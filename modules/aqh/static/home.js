@@ -14,8 +14,8 @@
 */
 
 $(document).ready(function () {
-//	$(".summernote").summernote({});
-	$('.summernote').summernote({
+	$(".summernote").summernote({});
+/*	$('.summernote').summernote({
 		height: 150,
 		toolbar: [
 			['style', ['bold', 'italic', 'underline', 'clear']],
@@ -23,7 +23,7 @@ $(document).ready(function () {
 			['para', ['ul', 'ol', 'paragraph']],
 			['insert', ['link']]
 		]
-	});
+	});*/
 });
 
 

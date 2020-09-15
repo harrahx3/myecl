@@ -64,24 +64,6 @@
 	}, {
 		"call": {
 			"type": "callback",
-			"location": "getAll"
-		},
-		"viewport": {
-			"type": "external",
-			"location": "/module/aqh/getAll"
-		}
-	}, {
-		"call": {
-			"type": "callback",
-			"location": "getAllFrom"
-		},
-		"viewport": {
-			"type": "external",
-			"location": "/module/aqh/getAllFrom"
-		}
-	}, {
-		"call": {
-			"type": "callback",
 			"location": "getAllEvents"
 		},
 		"viewport": {
@@ -144,29 +126,6 @@
 		"viewport": {
 			"type": "external",
 			"location": "/module/aqh/deleteComment",
-			"method": "POST",
-			"enctype": "urlencoded"
-		},
-		"authorisation": ""
-	}, {
-		"call": {
-			"type": "callback",
-			"location": "getPostComments"
-		},
-		"viewport": {
-			"type": "external",
-			"location": "/module/aqh/getPostComments",
-			"method": "POST",
-			"enctype": "urlencoded"
-		}
-	}, {
-		"call": {
-			"type": "callback",
-			"location": "getPostsForEvent"
-		},
-		"viewport": {
-			"type": "external",
-			"location": "/module/aqh/getPostsForEvent",
 			"method": "POST",
 			"enctype": "urlencoded"
 		},
