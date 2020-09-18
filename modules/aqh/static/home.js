@@ -14,30 +14,27 @@
 */
 
 $(document).ready(function () {
-	$(".summernote").summernote({});
-/*	$('.summernote').summernote({
-		height: 150,
-		toolbar: [
-			['style', ['bold', 'italic', 'underline', 'clear']],
-			['color', ['color']],
-			['para', ['ul', 'ol', 'paragraph']],
-			['insert', ['link']]
-		]
-	});*/
+//	$(".summernote").summernote({});
+	$('.summernote').summernote({
+		height: 150
+	});
+
+	//$('[data-toggle="popover"]').popover();
 });
 
-
-$(document).on('click', '.delete', function () {
+$(document).on('click', '.deletePost', function () {
 	var id = $(this).attr('id');
-	$.post('/module/aqh/delete', {
+	$.post('/module/aqh/deletePost', {
 		id: id
 	}, (result) => {
 		$(".summernote").code('<p><br></p>');
 		$("#current").val(-1);
 		//loadNews();
-		$.get('/module/aqh/getAllEvents', (result) => {
+	/*	$.get('/module/aqh/getAllEvents', (result) => {
 			$("#main-content-wrapper").html(result);
 		});
+		*/
+		relocate('internal', 'aqh', 'home');
 	});
 });
 
@@ -47,9 +44,10 @@ $(document).on('click', '.deleteComment', function () {
 		id: id
 	}, (result) => {
 		//loadNews();
-		$.get('/module/aqh/getAllEvents', (result) => {
+	/*	$.get('/module/aqh/getAllEvents', (result) => {
 			$("#main-content-wrapper").html(result);
-		});
+		});*/
+		relocate('internal', 'aqh', 'home');
 	});
 });
 
@@ -62,7 +60,6 @@ $(document).on('click', '.edit', function () {
 		$(".summernote").code(result.content);
 	});
 });
-
 
 $(".addPost").click(function (e) {
 //$(document).on('click', '.add', function () {
@@ -127,9 +124,6 @@ $(".addComment").click(function (e) {
 	});*/
 	relocate('internal', 'aqh', 'home');
 });
-
-
-
 /*$(document).on('click', '.delete', function () {
 	var id = $(this).attr('id');
 	$.post('/module/aqh/delete', {

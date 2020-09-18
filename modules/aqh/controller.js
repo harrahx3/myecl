@@ -11,6 +11,13 @@ exports.addComment = function (req, res) {
 
 exports.getAllEvents = function (req, res) {
 
+	var xss = require("xss"); // Protect against Cross-site scripting
+console.log(xss.whiteList);
+	/*var h = '<img src="/myimg/img.png" alt="abc"><p>gras</p><script>alert("xss");</script>';
+	console.log(h);
+	h = xss(h);
+	console.log(h);*/
+
 	req.database.query("SET lc_time_names = 'fr_FR';", (errorl, resultl) => {
 //});
 
@@ -36,11 +43,11 @@ exports.getAllEvents = function (req, res) {
 					var event={
 						id: result[i]['id'],
 						date: result[i]['date'],
-						title: result[i]['title'],
-						content: result[i]['content'],
-						author: result[i]['author'],
+						title: xss(result[i]['title']),
+						content: xss(result[i]['content']),
+						author: xss(result[i]['author']),
 						admin: admin,
-						organisateur: result[i]['organisateur'],
+						organisateur: xss(result[i]['organisateur']),
 						start: result[i]['start'],
 						end: result[i]['end'],
 						location: result[i]['location'],
@@ -62,7 +69,7 @@ exports.getAllEvents = function (req, res) {
 
 				//get all the comments
 				var comments = [];
-				req.database.query('SELECT c.id as id, c.content as content, DATE_FORMAT(c.date, "%D %b") as date, u.nick as author, c.postid as postid FROM AQHcomments AS c JOIN core_user AS u ON c.author=u.id ORDER BY c.date ASC;', (errorC, resultC) => {
+				req.database.query('SELECT c.id as id, c.content as content, DATE_FORMAT(c.date, "%D %b") as date, u.nick as author, u.id as author_id, c.postid as postid, u.picture as author_avatar FROM AQHcomments AS c JOIN core_user AS u ON c.author=u.id ORDER BY c.date ASC;', (errorC, resultC) => {
 					if (errorC) {
 						req.logger.error(errorC);
 						res.sendStatus(500);
@@ -71,9 +78,9 @@ exports.getAllEvents = function (req, res) {
 							for (c of resultC) {
 								comments.push({
 									id: c['id'],
-									content: c['content'],
+									content: xss(c['content']),
 									date: c['date'],
-									author: c['author'],
+									author: {id: xss(c['author_id']), name: xss(c['author']), avatar: xss(c['author_avatar'])},
 									postid: c['postid']
 								});
 							}
@@ -81,7 +88,7 @@ exports.getAllEvents = function (req, res) {
 					}
 
 					// get all posts
-					req.database.query('SELECT p.id as id, p.content as content, DATE_FORMAT(p.date, "%W %D %b %Y") as date, u.nick as author, p.eventid as eventid FROM AQHposts AS p JOIN core_user AS u ON p.author=u.id ORDER BY p.date DESC;', (errorQuery, resultQuery) => {
+					req.database.query('SELECT p.id as id, p.content as content, DATE_FORMAT(p.date, "%W %D %b %Y") as date, u.nick as author, u.picture as author_avatar, u.id as author_id, p.eventid as eventid FROM AQHposts AS p JOIN core_user AS u ON p.author=u.id ORDER BY p.date DESC;', (errorQuery, resultQuery) => {
 						if (errorQuery) {
 							req.logger.error(errorQuery);
 							res.sendStatus(500);
@@ -92,9 +99,9 @@ exports.getAllEvents = function (req, res) {
 								for (r of resultQuery) {
 									var post={
 										id: r['id'],
-										content: r['content'],
+										content: xss(r['content']),
 										date: r['date'],
-										author: r['author'],
+										author: {id: xss(r['author_id']), name: xss(r['author']), avatar: xss(r['author_avatar'])},
 										eventid: r['eventid'],
 										comments: []
 									};
@@ -224,8 +231,9 @@ exports.getOne = function (req, res) {
 
 
 exports.addPost = function (req, res) {
+	var xss = require("xss");
 	console.log("addPost");
-	req.database.query('INSERT INTO AQHposts (content, date, author, eventid) VALUES (?, NOW(), ?, ?);', [req.body.content, req.user.id, req.body.eventid], (error, result) => {
+	req.database.query('INSERT INTO AQHposts (content, date, author, eventid) VALUES (?, NOW(), ?, ?);', [xss(req.body.content), xss(req.user.id), xss(req.body.eventid)], (error, result) => {
 		if (error) {
 			req.logger.error(error);
 		} else {
@@ -235,8 +243,9 @@ exports.addPost = function (req, res) {
 };
 
 exports.update = function (req, res) {
+	var xss = require("xss");
 	console.log("update");
-	req.database.query('UPDATE AQHposts SET content = ? WHERE id = ?;', [req.body.content, req.body.id], (error, result) => {
+	req.database.query('UPDATE AQHposts SET content = ? WHERE id = ?;', [xss(req.body.content), xss(req.body.id)], (error, result) => {
 		if (error) {
 			req.logger.error(error);
 		} else {
@@ -246,6 +255,7 @@ exports.update = function (req, res) {
 };
 
 exports.deletePost = function (req, res) {
+	console.log("delete post");
 	req.database.query('DELETE FROM AQHcomments WHERE postid = ?', [req.body.id], (error, result) => {
 		if (error) {
 			req.logger.error(error);
@@ -263,6 +273,7 @@ exports.deletePost = function (req, res) {
 };
 
 exports.deleteComment = function (req, res) {
+	console.log("delete comment");
 	req.database.query('DELETE FROM AQHcomments WHERE id = ?;', [req.body.id], (error, result) => {
 		if (error) {
 			req.logger.error(error);

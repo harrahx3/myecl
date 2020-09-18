@@ -1,4 +1,5 @@
 exports.getAllAdmin = function (req, res) {
+	var xss = require("xss");
 	var data = {};
 	data.studies = [];
 
@@ -13,8 +14,8 @@ exports.getAllAdmin = function (req, res) {
 					promises.push(new Promise((resolve, reject) => {
 						var study = {};
 						study.id = result[key]['id'];
-						study.description = result[key]['description'];
-						study.title = result[key]['title'];
+						study.description = xss(result[key]['description']);
+						study.title = xss(result[key]['title']);
 						study.ids = JSON.parse(result[key]['appliants']).ids;
 						study.students = [];
 
@@ -54,6 +55,7 @@ exports.getAllAdmin = function (req, res) {
 }
 
 exports.getAll = function (req, res) {
+	var xss = require("xss");
 	req.database.query('SELECT * FROM je_studies ;', function (error, result) {
 		if (error) {
 			req.logger.error(error);
@@ -65,8 +67,8 @@ exports.getAll = function (req, res) {
 			for (let key in result) {
 				let study = {};
 				study.id = result[key]['id'];
-				study.description = result[key]['description'];
-				study.title = result[key]['title'];
+				study.description = xss(result[key]['description']);
+				study.title = xss(result[key]['title']);
 				study.appliantsNumber = JSON.parse(result[key]["appliants"]).ids.length;
 				study.isIn = JSON.parse(result[key]['appliants']).ids.includes(req.user.id);
 				data.studies.push(study);

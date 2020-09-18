@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+	<meta charset="utf-8">
+	<title>MyECL - Site de l'associatif centralien</title>
+
+	<link rel="shortcut icon" type="image/x-icon" href="/commons/img/favicon.png">
+
+	<link rel="stylesheet" type="text/css" href="/commons/css/graphics.css">
+	<link rel="stylesheet" type="text/css" href="/commons/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="/commons/css/fullpage.css">
+	<link rel="stylesheet" type="text/css" href="/commons/css/kingadmin.css">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous" />
+
+	<link href="/user/style.css" rel="stylesheet" type="text/css">
+
+	<!-- Dynamically loaded CSS -->
+</head>
+
+<body class="sidebar-fixed topnav-fixed dashboard">
+
+	<!-- WRAPPER -->
+	<div id="wrapper" class="wrapper">
+
+		<!-- TOP BAR -->
+		<div class="top-bar navbar-fixed-top">
+			<div class="container">
+				<div class="clearfix">
+					<a class="pull-left toggle-sidebar-collapse" href="#"><i class="fa fa-bars"></i></a>
+					<div class="pull-left left" id="titleMyECL"><a href="javascript:relocate('', '', '');"><span class="texte">MyECL</span></a></div>
+
+					<div class="pull-right right">
+						<!-- Dynamic header -->
+						<div class="top-bar-right" id="dynamicHeader">
+
+						</div>
+						<div class="top-bar-right" id="logoutHeader">
+							<span id="logout"><i class="fas fa-sign-out-alt"></i></span>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<!-- LEFT SIDEBAR -->
+		<div id="left-sidebar" class="left-sidebar">
+			<!-- main-nav -->
+			<div class="sidebar-scroll">
+				<nav class="main-nav">
+					<ul class="main-menu" id="dynamicMenu">
+						<!-- Dynamic menu -->
+					</ul>
+				</nav>
+			</div>
+		</div>
+
+		<!-- MAIN CONTENT WRAPPER -->
+		<div id="main-content-wrapper" class="content-wrapper">
+		</div>
+
+		<div id="contact-content-wrapper" class="content-wrapper">
+		</div>
+
+	</div>
+
+	<!-- Javascript -->
+	<script src="/commons/js/jquery-2.1.0.js"></script>
+	<script src="/commons/js/king-bootstrap.js"></script>
+	<script src="/commons/js/modernizr.js"></script>
+	<script src="/commons/js/bootstrap-tour.js"></script>
+	<script src="/commons/js/slimscroll.js"></script>
+	<script src="/commons/js/king-common.js"></script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+
+	<script src="/user/script.js"></script>
+	<!-- Dynamically loaded JS -->
+
+</body>
+
+</html>

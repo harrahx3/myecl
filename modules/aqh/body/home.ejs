@@ -1,16 +1,5 @@
 <%#Code ejs qui génére coté serveur un code html à partir d'un objet data qui contient les events %>
 
-<%
-function formatDatetime(d) {
-  var year = d.getFullYear();
-  var month = d.getMonth() + 1;
-  var day = d.getDay();
-  var hour = d.getHours();
-  var minutes = d.getMinutes();
-  return [day, month, year].join('/') + ' ' + [hour, minutes].join(':');
-}
-%>
-
 
 <!--include libraries(jQuery, bootstrap) -->
 <!--<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -43,7 +32,7 @@ function formatDatetime(d) {
 <div class="tab-content">
 
   <!-- first tab: presentation -->
-  <div id="presentation" class="tab-pane"> <!--  active in"> -->
+  <div id="presentation" class="tab-pane active in"> <!--  active in"> -->
 
     <div class="jumbotron">
       <h1 class="display-4">AQH</h1>
@@ -53,6 +42,8 @@ function formatDatetime(d) {
       <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
     </div>
 
+  <!--  <button type="button" class="btn btn-lg btn-danger" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Click to toggle popover</button>
+-->
   </div>
 
   <!-- tab for all events in BDECalendar -->
@@ -103,13 +94,25 @@ function formatDatetime(d) {
 
 
           <!-- print all posts in bootstrap media object-->
+
+          <ul class="media-list">
+
             <%  for (let i in event.posts) { %>
 
-            <div class="media" style="padding: 1em;">
+            <li class="media" style="padding: 1em;">
+              <div class="media-left">
+                <a href="javascript:relocate('internal', 'profile', 'profile/<%=event.posts[i].author.id%>');">
+                  <% if (event.posts[i].author.avatar != '0') { %>
+                    <img class="media-object" width="64" src="/uploads/<%= event.posts[i].author.avatar%>" alt="Profile Picture" />
+                  <%} else {%>
+                    <img class="media-object" width="64" src="/misc/profile/avatar" alt="Profile Picture" />
+                  <%}%>
+                </a>
+              </div>
               <div class="media-body" style="padding: 1em; background-color : #EEEEEE;">
                 <h4 class="mt-0">
                   <tr>
-                    <td><p style="font-weight: bold;">Post de <%-event.posts[i].author%> le <%-event.posts[i].date%></p></td>
+                    <td><p style="font-weight: bold;">Post de <%-event.posts[i].author.name%> le <%-event.posts[i].date%></p></td>
 
                     <%# admin can delete and edit post %>
                     <% if (event.admin) { %>
@@ -124,14 +127,26 @@ function formatDatetime(d) {
                 <p><button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapse<%=event.posts[i].id%>" aria-expanded="false" aria-controls="collapseExample">
                   <%=event.posts[i].comments.length%> <%= event.posts[i].comments.length >= 2 ? "commentaires" : "commentaire" %>
                 </button></p>
+
                 <div class="collapse" id="collapse<%=event.posts[i].id%>">
-                  <div class="col-md-offset-1 col-md-8">
-                    <ul class="list-unstyled">
+                  <div class="">
+
+                <!--  <div class="col-md-offset-1 col-md-8"> -->
+                    <ul class="list-unstyled media-list">
                       <% for (let j in event.posts[i].comments) { %>
-                        <li class="media">
+                        <li class="media mt-3">
+                          <div class="media-left">
+                            <a href="javascript:relocate('internal', 'profile', 'profile/<%=event.posts[i].comments[j].author.id%>');">
+                              <% if (event.posts[i].comments[j].author.avatar != '0') { %>
+                                <img class="media-object" width="64" src="/uploads/<%=event.posts[i].comments[j].author.avatar%>" alt="Profile Picture" />
+                              <%} else {%>
+                                <img class="media-object" width="64" src="/misc/profile/avatar" alt="Profile Picture" />
+                              <%}%>
+                             </a>
+                          </div>
                           <div class="media-body">
                             <h5 class="mt-0">
-                              <%=event.posts[i].comments[j].author%> le <%=event.posts[i].comments[j].date%>
+                              <%=event.posts[i].comments[j].author.name%> le <%=event.posts[i].comments[j].date%>
                               <% if (event.admin) { %>
                                 <button class='btn btn-danger deleteComment' id="<%=event.posts[i].comments[j].id%>">Supprimer</button>
                               <% } %>
@@ -150,9 +165,11 @@ function formatDatetime(d) {
                 </div>
 
               </div>
-            </div>
+            </li>
 
           <% } %>
+
+        </ul>
 
 
       </div>

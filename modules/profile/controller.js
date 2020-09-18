@@ -142,7 +142,7 @@ exports.deleteImage = function (req, res) {
 					// suppresssion de l'ancienne image
 					fs.unlink(req.user_upload + '/' + filename, function (error) {
 						if (error) {
-							req.logger.error(err);
+							req.logger.error(error);
 							res.sendStatus(500);
 						}
 					});
@@ -174,7 +174,7 @@ exports.updateImage = function (req, res) {
 					// suppresssion de l'ancienne image
 					fs.unlink(req.user_upload + '/' + filename, function (error) {
 						if (error) {
-							req.logger.error(err);
+							req.logger.error(error);
 							res.sendStatus(500);
 						}
 					});

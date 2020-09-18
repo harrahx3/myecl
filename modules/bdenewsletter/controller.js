@@ -1,4 +1,5 @@
 exports.getOne = function (req, res) {
+	var xss = require("xss");
 	req.database.query('SELECT * FROM BDENewsletter WHERE id = ?;', [req.query.id], (error, result) => {
 		if (error) {
 			req.logger.error(error);
@@ -7,7 +8,7 @@ exports.getOne = function (req, res) {
 			if (result.length > 0) {
 				res.json({
 					id: result[0]['id'],
-					content: result[0]['content'],
+					content: xss(result[0]['content']),
 					date: result[0]['date']
 				});
 			} else {
@@ -22,6 +23,7 @@ exports.getOne = function (req, res) {
 };
 
 exports.getAll = function (req, res) {
+	var xss = require("xss");
 	req.database.query('SELECT * FROM BDENewsletter ORDER BY date DESC;', (error, result) => {
 		if (error) {
 			req.logger.error(error);
@@ -35,7 +37,7 @@ exports.getAll = function (req, res) {
 					data.newsletters.push({
 						id: result[i]['id'],
 						date: result[i]['date'],
-						content: result[i]['content']
+						content: xss(result[i]['content'])
 					});
 				}
 			}
