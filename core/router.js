@@ -82,6 +82,17 @@ module.exports = (context, app) => {
 		});
 	});
 
+	app.get(['/site.webmanifest'], context.bouncer('visitor'), (req, res) => {
+		res.sendFile(req.url, {
+			root: context.privatePath
+		}, (error) => {
+			if (error) {
+				console.log(error);
+				res.redirect('/forbidden');
+			}
+		});
+	});
+
 	// signup
 	app.get('/signup', context.bouncer('visitor'), signupController.load);
 	app.post('/signup', context.bouncer('visitor'), bodyParser.urlencoded({
