@@ -12,11 +12,21 @@ exports.addComment = function (req, res) {
 exports.getAllEvents = function (req, res) {
 
 	var xss = require("xss"); // Protect against Cross-site scripting
-console.log(xss.whiteList);
+
+	webPush = require('web-push');
+	subscriptions = [];
+	const publicVapidKey = "BH3iIFAa05KHsYCDND5vXpa_MqRALURmWGpRX3dg5lBaxS6WQXEzJdhda3_dNAoKR3OD8txdiM2Op9mv-71eXPs";
+	const privateVapidKey = "RXWqNvNVXov5HWdrxlM-dLG9TyBkYsStahQhiWLrrr0";
+	webPush.setVapidDetails('mailto:hyacinthemen@gmail.com', publicVapidKey, privateVapidKey);
+
+	//console.log(xss.whiteList);
+
 	/*var h = '<img src="/myimg/img.png" alt="abc"><p>gras</p><script>alert("xss");</script>';
 	console.log(h);
 	h = xss(h);
 	console.log(h);*/
+
+	console.log("getAllEvents begin");
 
 	req.database.query("SET lc_time_names = 'fr_FR';", (errorl, resultl) => {
 //});
@@ -44,7 +54,7 @@ console.log(xss.whiteList);
 						id: result[i]['id'],
 						date: result[i]['date'],
 						title: xss(result[i]['title']),
-						content: xss(result[i]['content']),
+						content: (result[i]['content']),
 						author: xss(result[i]['author']),
 						admin: admin,
 						organisateur: xss(result[i]['organisateur']),
@@ -53,8 +63,10 @@ console.log(xss.whiteList);
 						location: result[i]['location'],
 						posts: []
 					};
+
 					var add=true;
 					for (var j in data.events) {
+						// is the current user an admin for the current event
 						if (data.events[j].id==event.id) {
 							add=false;
 							if (!data.events[j].admin && admin) {
@@ -99,7 +111,7 @@ console.log(xss.whiteList);
 								for (r of resultQuery) {
 									var post={
 										id: r['id'],
-										content: xss(r['content']),
+										content: (r['content']),
 										date: r['date'],
 										author: {id: xss(r['author_id']), name: xss(r['author']), avatar: xss(r['author_avatar'])},
 										eventid: r['eventid'],
@@ -136,6 +148,7 @@ console.log(xss.whiteList);
 									res.sendStatus(500);
 								} else {
 									//console.log(resultEjs);
+									console.log("getAllEvents send");
 									res.send(resultEjs);
 								}
 							});
@@ -151,6 +164,8 @@ console.log(xss.whiteList);
 		}
 	});
 	});
+
+	console.log("getAllEvents end");
 };
 
 exports.getOne = function (req, res) {
@@ -233,7 +248,7 @@ exports.getOne = function (req, res) {
 exports.addPost = function (req, res) {
 	var xss = require("xss");
 	console.log("addPost");
-	req.database.query('INSERT INTO AQHposts (content, date, author, eventid) VALUES (?, NOW(), ?, ?);', [xss(req.body.content), xss(req.user.id), xss(req.body.eventid)], (error, result) => {
+	req.database.query('INSERT INTO AQHposts (content, date, author, eventid) VALUES (?, NOW(), ?, ?);', [(req.body.content), xss(req.user.id), xss(req.body.eventid)], (error, result) => {
 		if (error) {
 			req.logger.error(error);
 		} else {
@@ -245,7 +260,7 @@ exports.addPost = function (req, res) {
 exports.update = function (req, res) {
 	var xss = require("xss");
 	console.log("update");
-	req.database.query('UPDATE AQHposts SET content = ? WHERE id = ?;', [xss(req.body.content), xss(req.body.id)], (error, result) => {
+	req.database.query('UPDATE AQHposts SET content = ? WHERE id = ?;', [(req.body.content), xss(req.body.id)], (error, result) => {
 		if (error) {
 			req.logger.error(error);
 		} else {
@@ -281,6 +296,41 @@ exports.deleteComment = function (req, res) {
 			res.sendStatus(200);
 		}
 	});
+};
+
+
+exports.subscribe = function (req, res) {
+	console.log("subscribe");
+
+	subscription = req.body.content;
+	console.log(subscription);
+	subscriptions.push(subscription);
+
+	res.sendStatus(200);
+
+	console.log("/n subscriptions: /n");
+	console.log(subscriptions);
+
+};
+
+exports.broadcast_notif = function (req, res) {
+	console.log("broadcast received");
+
+	res.sendStatus(200);
+
+	console.log("/n subscriptions: /n");
+	console.log(subscriptions);
+
+	const payload = JSON.stringify({
+    title: 'BROADCAST Push notifications with Service Workers !!!',
+  });
+
+  for (var i = 0; i < subscriptions.length; i++) {
+    webPush.sendNotification(JSON.parse(subscriptions[i]), payload)
+      .catch(error => console.error(error));
+  }
+
+
 };
 
 /*exports.getALLData = function (req, res) {

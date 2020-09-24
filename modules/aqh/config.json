@@ -70,6 +70,16 @@
 			"type": "external",
 			"location": "/module/aqh/getAllEvents"
 		}
+	},
+	{
+		"call": {
+			"type": "callback",
+			"location": "broadcast_notif"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/aqh/broadcast_notif"
+		}
 	}, {
 		"call": {
 			"type": "callback",
@@ -82,7 +92,21 @@
 			"enctype": "urlencoded"
 		},
 		"authorisation": ""
-	}, {
+	},
+	{
+		"call": {
+			"type": "callback",
+			"location": "subscribe"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/aqh/subscribe",
+			"method": "POST",
+			"enctype": "urlencoded"
+		},
+		"authorisation": ""
+	},
+	{
 		"call": {
 			"type": "callback",
 			"location": "addComment"

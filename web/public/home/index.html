@@ -6,10 +6,6 @@
 
 	<link rel="manifest" href="/site.webmanifest">
 
-	<script type="text/javascript">
-		console.log();
-	</script>
-
 	<title>MyECL - Site de l'associatif centralien</title>
 
 	<link rel="shortcut icon" type="image/x-icon" href="/commons/img/favicon.png">
@@ -21,6 +17,12 @@
 
 	<link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
 	 crossorigin="anonymous">
+
+	 <script type="text/javascript">
+	  navigator.serviceWorker.register('/sw.js', {
+				 scope: '/'
+			 });
+	 </script>
 </head>
 
 <body>

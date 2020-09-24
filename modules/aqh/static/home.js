@@ -13,16 +13,77 @@
   </div>
 */
 
+
+function urlBase64ToUint8Array(base64String) {
+      const padding = '='.repeat((4 - base64String.length % 4) % 4);
+      const base64 = (base64String + padding)
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
+
+      const rawData = window.atob(base64);
+      const outputArray = new Uint8Array(rawData.length);
+
+      for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+      }
+      return outputArray;
+    }
+
+  //  const publicVapidKey = 'BH3iIFAa05KHsYCDND5vXpa_MqRALURmWGpRX3dg5lBaxS6WQXEzJdhda3_dNAoKR3OD8txdiM2Op9mv-71eXPs';
+
+
+    async function triggerPushNotificationSubscription() {
+      if ('serviceWorker' in navigator) {
+        const register = await navigator.serviceWorker.register('/sw.js', {
+          scope: '/'
+        });
+
+        const subscription = await register.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
+        });
+
+				$.post('/module/aqh/subscribe', {
+					content: JSON.stringify(subscription)
+				});
+
+				// broadcastPushNotification();
+
+        /*await fetch('module/aqh/subscribe', {
+          method: 'POST',
+          body: JSON.stringify(subscription),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });*/
+      } else {
+        console.error('Service workers are not supported in this browser');
+      }
+    }
+
+
+    async function broadcastPushNotification() {
+      /*  await fetch('module/aqh/broadcast_notif', {
+          method: 'GET'
+        });*/
+				$.get('/module/aqh/broadcast_notif', {})
+    }
+
+
 $(document).ready(function () {
+//	triggerPushNotificationSubscription();
 //	$(".summernote").summernote({});
 	$('.summernote').summernote({
 		height: 150
 	});
-
+//	triggerPushNotificationSubscription();
+//	broadcastPushNotification();
 	//$('[data-toggle="popover"]').popover();
 });
 
 $(document).on('click', '.deletePost', function () {
+//	broadcastPushNotification();
+
 	var id = $(this).attr('id');
 	$.post('/module/aqh/deletePost', {
 		id: id
@@ -39,6 +100,7 @@ $(document).on('click', '.deletePost', function () {
 });
 
 $(document).on('click', '.deleteComment', function () {
+//	// broadcastPushNotification();
 	var id = $(this).attr('id');
 	$.post('/module/aqh/deleteComment', {
 		id: id
@@ -52,6 +114,7 @@ $(document).on('click', '.deleteComment', function () {
 });
 
 $(document).on('click', '.edit', function () {
+	// broadcastPushNotification();
 	var id = $(this).attr('id');
 	$.get('/module/aqh/getOne', {
 		id: id
@@ -62,6 +125,8 @@ $(document).on('click', '.edit', function () {
 });
 
 $(".addPost").click(function (e) {
+	broadcastPushNotification();
+
 //$(document).on('click', '.add', function () {
 
 	console.log("click add Post button");
@@ -100,6 +165,8 @@ $(".addPost").click(function (e) {
 });
 
 $(".addComment").click(function (e) {
+	// broadcastPushNotification();
+
 //$(document).on('click', '.add', function () {
 
 	console.log("click addComment button");
@@ -112,18 +179,24 @@ $(".addComment").click(function (e) {
 	var content = $(selector).val();
 	console.log(content);
 
-	$.post('/module/aqh/addComment', {
-		content: content,
-		postid: post_id
-	});
-
 	$(selector).val('');
-//	loadNews();
-	/*$.get('/module/aqh/getAllEvents', (result) => {
-		$("#main-content-wrapper").html(result);
-	});*/
-	relocate('internal', 'aqh', 'home');
+
+	if (content) {
+		$.post('/module/aqh/addComment', {
+			content: content,
+			postid: post_id
+		});
+
+	//	loadNews();
+		/*$.get('/module/aqh/getAllEvents', (result) => {
+			$("#main-content-wrapper").html(result);
+		});*/
+		relocate('internal', 'aqh', 'home');
+	}
+
 });
+
+triggerPushNotificationSubscription();
 /*$(document).on('click', '.delete', function () {
 	var id = $(this).attr('id');
 	$.post('/module/aqh/delete', {

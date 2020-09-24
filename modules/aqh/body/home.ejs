@@ -39,7 +39,7 @@
       <p class="lead"> A quelle heure ?</p>
       <hr class="my-4">
       <p>Posts info associatif</p>
-      <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+
     </div>
 
   <!--  <button type="button" class="btn btn-lg btn-danger" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Click to toggle popover</button>
@@ -52,8 +52,11 @@
     <div id="event<%= event.id %>" class="tab-pane fade" >
 
 
+      <p class='text-center'>
+        <span class='lead'> <%=event.title %></span><br>
+      </p>
 
-      <div class='col-md-6 col-md-offset-3'>
+    <!--  <div class='col-md-6 col-md-offset-3'>
         <p class='text-center'>
           <span class='lead'> <%=event.title %></span><br>
           <span><i> <%=event.content%> </i></span>
@@ -63,7 +66,7 @@
            <span>Organisateur : <%=event.organisateur%> &emsp;&ensp;Lieu : <%=event.location%> </span>
          </p>
        </div>
-
+-->
       <% if (event.admin) { %>
         <div class="col-md-offset-2 col-md-8">
         	<form class="form-horizontal" method="post">
@@ -89,7 +92,7 @@
 
           <!-- if there is no posts for this event -->
           <% if (event.posts.length==0) { %>
-            <h3>Pas encore de postes pour cet événement</h3>
+            <h3>Pas encore de posts pour cet événement</h3>
           <% } %>
 
 
@@ -125,7 +128,7 @@
 
                 <%# print comment in bootstrap collapse object %>
                 <p><button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapse<%=event.posts[i].id%>" aria-expanded="false" aria-controls="collapseExample">
-                  <%=event.posts[i].comments.length%> <%= event.posts[i].comments.length >= 2 ? "commentaires" : "commentaire" %>
+                   <%= event.posts[i].comments.length == 0 ? "Pas encore de commentaires" : (event.posts[i].comments.length == 1 ? "1 commentaire" : event.posts[i].comments.length + " commentaires")%>
                 </button></p>
 
                 <div class="collapse" id="collapse<%=event.posts[i].id%>">
