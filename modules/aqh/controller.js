@@ -1,3 +1,13 @@
+const xss = require("xss"); // Protect against Cross-site scripting
+const webPush = require('web-push'); // Send Push notifications
+//console.log(xss.whiteList);
+
+/*var h = '<img src="/myimg/img.png" alt="abc"><p>gras</p><script>alert("xss");</script>';
+console.log(h);
+h = xss(h);
+console.log(h);*/
+
+
 exports.addComment = function (req, res) {
 	console.log("addComment");
 	req.database.query('INSERT INTO AQHcomments (content, date, author, postid) VALUES (?, NOW(), ?, ?);', [req.body.content, req.user.id, req.body.postid], (error, result) => {
@@ -9,163 +19,223 @@ exports.addComment = function (req, res) {
 	});
 }
 
-exports.getAllEvents = function (req, res) {
 
-	var xss = require("xss"); // Protect against Cross-site scripting
+// Pour avoir les données (nottament les assos) de l'utilisateur connecté
+loadUserData = async function (req, res) {
+	return new Promise((resolve, reject) => {
 
-	webPush = require('web-push');
+		var updated = false;
+
+		var	id = req.user.id;
+		console.log(id);
+
+		req.database.query("SELECT id, login, name, firstname, nick, DATE_FORMAT(birth, '%d/%m/%Y') AS birth, promo, floor, email, picture, online, DATE_FORMAT(last_seen, '%d/%m/%Y') AS last_seen_date, DATE_FORMAT(last_seen, '%H:%i') AS last_seen_hour FROM core_user WHERE id = ?", [id], function (error, result) {
+			if (error) {
+				req.logger.warning(error);
+				res.sendStatus(500);
+			} else {
+				if (result.length) {
+					var data = new Object();
+					data.found = true;
+					data.updated = updated;
+					data.editable = id == req.user.id;
+					data.id = id;
+					for (let entry in result[0]) {
+						if (entry != 'password') {
+							data[entry] = result[0][entry]
+						}
+					}
+
+					data.assos = new Array();
+					var promises = new Array();
+					req.database.query("SELECT u.name AS name, u.description AS description, m.position AS position FROM core_membership AS m JOIN core_group AS u ON m.id_group = u.id WHERE m.id_user = ?", [id], function (err2, result2) {
+						if (err2) {
+							req.logger.warning(error);
+							res.sendStatus(500);
+						} else {
+							if (result2.length) {
+								for (let i in result2) {
+									promises.push(new Promise(function (resolve) {
+										data.assos.push({
+											'name': result2[i]['name'],
+											'description': result2[i]['description'],
+											'position': result2[i]['position']
+										});
+										resolve();
+									}));
+								}
+								Promise.all(promises).then(function () {
+									resolve(data);
+								})
+							}
+						}
+					});
+
+				} else {
+					var data = new Object();
+					data.found = false;
+					resolve(data);
+				}
+			}
+		})
+	});
+};
+
+loadEventsData = async function (req, res) {
+	return new Promise((resolve, reject) => {
+		req.database.query("SET lc_time_names = 'fr_FR';", (errorl, resultl) => { // Pour tenter de formater les dates en francais
+
+		//get all events
+	//	req.database.query('SELECT e.id as id, e.description as content, e.start as date, e.organisationid as author, e.title as title FROM BDECalendar AS e ORDER BY e.start DESC;', (error, result) => {
+			req.database.query('SELECT t.id as id, t.content as content, t.location as location, DATE_FORMAT(t.date, "%W %D %b %Y") as date, DATE_FORMAT(t.start, "%W %D %b %Y") as start, DATE_FORMAT(t.end, "%W %D %b %Y") as end, t.organisationid as author, t.title as title, t.id_user as miduser, g.name AS organisateur FROM (SELECT e.id as id, e.description as content, e.start as date, e.start as start, e.end as end, e.organisationid as organisationid, e.title as title, e.location as location, m.id_user as id_user FROM BDECalendar AS e JOIN core_membership AS m ON e.organisationid=m.id_group) AS t JOIN core_group AS g ON t.organisationid=g.id ORDER BY date DESC;', (error, result) => {
+
+				if (error) {
+					req.logger.error(error);
+					res.sendStatus(500);
+				} else {
+					var data = {
+						events: []
+					};
+
+					if (result.length) {
+						for (let i in result) {
+							var admin = (result[i]['miduser'] == req.user.id);
+							var event={
+								id: result[i]['id'],
+								date: result[i]['date'],
+								title: xss(result[i]['title']),
+								content: (result[i]['content']),
+								author: xss(result[i]['author']),
+								admin: admin,
+								organisateur: xss(result[i]['organisateur']),
+								start: result[i]['start'],
+								end: result[i]['end'],
+								location: result[i]['location'],
+								posts: []
+							};
+
+							var add=true;
+							for (var j in data.events) {
+								// is the current user an admin for the current event
+								 if (data.events[j].id==event.id) {
+									add=false;
+									if (!data.events[j].admin && admin) {
+										data.events[j].admin=true;
+									}
+								}
+							}
+							if (add)
+								data.events.push(event);
+						}
+
+						if (user_data.isAdminOrBde) // BDE ans site administrators are admins on every events
+							for (var i = 0; i < data.events.length; i++)
+								data.events[i].admin = true;
+
+						//get all the comments
+						var comments = [];
+						req.database.query('SELECT c.id as id, c.content as content, DATE_FORMAT(c.date, "%D %b") as date, u.nick as author, u.id as author_id, c.postid as postid, u.picture as author_avatar FROM AQHcomments AS c JOIN core_user AS u ON c.author=u.id ORDER BY c.date ASC;', (errorC, resultC) => {
+							if (errorC) {
+								req.logger.error(errorC);
+								res.sendStatus(500);
+							} else {
+								if (resultC.length) {
+									for (c of resultC) {
+										comments.push({
+											id: c['id'],
+											content: xss(c['content']),
+											date: c['date'],
+											author: {id: xss(c['author_id']), name: xss(c['author']), avatar: xss(c['author_avatar'])},
+											postid: c['postid']
+										});
+									}
+								}
+							}
+
+							// get all posts
+							req.database.query('SELECT p.id as id, p.content as content, p.validated as validated, DATE_FORMAT(p.date, "%W %D %b %Y") as date, u.nick as author, u.picture as author_avatar, u.id as author_id, p.eventid as eventid FROM AQHposts AS p JOIN core_user AS u ON p.author=u.id ORDER BY p.date DESC;', (errorQuery, resultQuery) => {
+								if (errorQuery) {
+									req.logger.error(errorQuery);
+									res.sendStatus(500);
+								} else {
+									if (resultQuery.length) {
+										var posts = [];
+										for (r of resultQuery) {
+											var post={
+												id: r['id'],
+												content: (r['content']),
+												date: r['date'],
+												author: {id: xss(r['author_id']), name: xss(r['author']), avatar: xss(r['author_avatar'])},
+												eventid: r['eventid'],
+												validated: r['validated'],
+												comments: []
+											};
+
+											// associate comments to the post
+											for (var i in comments) {
+												if (comments[i].postid==post.id) {
+													post.comments.push(comments[i]);
+												}
+											}
+
+												// associate the post to the event
+												for (var i in data.events) {
+													if (data.events[i].id == r['eventid']) {
+														data.events[i].posts.push(post);
+														break;
+													}
+												}
+											//	if (data.events[data.events.length - r['eventid']])
+												//	data.events[data.events.length - r['eventid']].posts.push(post);
+											}
+										}
+									}
+										resolve(data);
+								});
+						});
+					}
+				}
+			});
+		});
+	});
+}
+
+
+
+ exports.getAllEvents = async function (req, res) {
+	 // interroge la base de données pour créer un grand objet data qui contient les détails des événements et envoie un fichier html généré avec le template home.ejs
+	console.log("getAllEvents begin");
+
+	let promise_user_data = loadUserData(req, res);
+	user_data = await promise_user_data; // met en pause le temps d'obtenir les infos de l'utilisateur
+
+	user_data.isAdminOrBde = false; // Les groupes admin et bde ont des droits spécifiques (admins de tous les événements et validation des posts)
+	for (var i = 0; i < user_data.assos.length; i++)
+		user_data.isAdminOrBde = user_data.isAdminOrBde || user_data.assos[i].name=='admin' || user_data.assos[i].name=='bde';
+
 	subscriptions = [];
 	const publicVapidKey = "BH3iIFAa05KHsYCDND5vXpa_MqRALURmWGpRX3dg5lBaxS6WQXEzJdhda3_dNAoKR3OD8txdiM2Op9mv-71eXPs";
 	const privateVapidKey = "RXWqNvNVXov5HWdrxlM-dLG9TyBkYsStahQhiWLrrr0";
 	webPush.setVapidDetails('mailto:hyacinthemen@gmail.com', publicVapidKey, privateVapidKey);
 
-	//console.log(xss.whiteList);
+	// Il faut absolument utiliser les promesses sinon le code continue et 'data' est vide au moment de générer le ejs
+	let promise = loadEventsData(req, res); // grande fonction lente avec plusieurs appels à la base de données
+	let data = await promise; // wait until the promise resolves (*)
 
-	/*var h = '<img src="/myimg/img.png" alt="abc"><p>gras</p><script>alert("xss");</script>';
-	console.log(h);
-	h = xss(h);
-	console.log(h);*/
+	data["user"]=user_data;
+	console.log(data);
 
-	console.log("getAllEvents begin");
-
-	req.database.query("SET lc_time_names = 'fr_FR';", (errorl, resultl) => {
-//});
-
-	//get all events
-//	req.database.query('SELECT e.id as id, e.description as content, e.start as date, e.organisationid as author, e.title as title FROM BDECalendar AS e ORDER BY e.start DESC;', (error, result) => {
-		req.database.query('SELECT t.id as id, t.content as content, t.location as location, DATE_FORMAT(t.date, "%W %D %b %Y") as date, DATE_FORMAT(t.start, "%W %D %b %Y") as start, DATE_FORMAT(t.end, "%W %D %b %Y") as end, t.organisationid as author, t.title as title, t.id_user as miduser, g.name AS organisateur FROM (SELECT e.id as id, e.description as content, e.start as date, e.start as start, e.end as end, e.organisationid as organisationid, e.title as title, e.location as location, m.id_user as id_user FROM BDECalendar AS e JOIN core_membership AS m ON e.organisationid=m.id_group) AS t JOIN core_group AS g ON t.organisationid=g.id ORDER BY date DESC;', (error, result) => {
-
-		if (error) {
-			req.logger.error(error);
+	// render the html page sent to the client from ejs file
+	req.engines['ejs'].renderFile('modules/aqh/body/home.ejs', data, (errorEjs, resultEjs) => {
+		if (errorEjs) {
+			req.logger.error(errorEjs);
 			res.sendStatus(500);
 		} else {
-
-			var data = {
-				events: []
-			};
-
-			if (result.length > 0) {
-				for (let i in result) {
-				//	console.log(result);
-					//console.log(result[i]);
-
-					var admin = (result[i]['miduser'] == req.user.id);
-					var event={
-						id: result[i]['id'],
-						date: result[i]['date'],
-						title: xss(result[i]['title']),
-						content: (result[i]['content']),
-						author: xss(result[i]['author']),
-						admin: admin,
-						organisateur: xss(result[i]['organisateur']),
-						start: result[i]['start'],
-						end: result[i]['end'],
-						location: result[i]['location'],
-						posts: []
-					};
-
-					var add=true;
-					for (var j in data.events) {
-						// is the current user an admin for the current event
-						if (data.events[j].id==event.id) {
-							add=false;
-							if (!data.events[j].admin && admin) {
-								data.events[j].admin=true;
-							}
-						}
-					}
-					if (add) {
-						data.events.push(event);
-					}
-				}
-
-				//get all the comments
-				var comments = [];
-				req.database.query('SELECT c.id as id, c.content as content, DATE_FORMAT(c.date, "%D %b") as date, u.nick as author, u.id as author_id, c.postid as postid, u.picture as author_avatar FROM AQHcomments AS c JOIN core_user AS u ON c.author=u.id ORDER BY c.date ASC;', (errorC, resultC) => {
-					if (errorC) {
-						req.logger.error(errorC);
-						res.sendStatus(500);
-					} else {
-						if (resultC.length > 0) {
-							for (c of resultC) {
-								comments.push({
-									id: c['id'],
-									content: xss(c['content']),
-									date: c['date'],
-									author: {id: xss(c['author_id']), name: xss(c['author']), avatar: xss(c['author_avatar'])},
-									postid: c['postid']
-								});
-							}
-						}
-					}
-
-					// get all posts
-					req.database.query('SELECT p.id as id, p.content as content, DATE_FORMAT(p.date, "%W %D %b %Y") as date, u.nick as author, u.picture as author_avatar, u.id as author_id, p.eventid as eventid FROM AQHposts AS p JOIN core_user AS u ON p.author=u.id ORDER BY p.date DESC;', (errorQuery, resultQuery) => {
-						if (errorQuery) {
-							req.logger.error(errorQuery);
-							res.sendStatus(500);
-						} else {
-							//console.log(resultQuery.length)
-							if (resultQuery.length > 0) {
-								var posts = [];
-								for (r of resultQuery) {
-									var post={
-										id: r['id'],
-										content: (r['content']),
-										date: r['date'],
-										author: {id: xss(r['author_id']), name: xss(r['author']), avatar: xss(r['author_avatar'])},
-										eventid: r['eventid'],
-										comments: []
-									};
-
-									// associate comments to posts
-									for (var i in comments) {
-										if (comments[i].postid==post.id) {
-											post.comments.push(comments[i]);
-										}
-									}
-
-										// associate the post to the event
-										for (var i in data.events) {
-											if (data.events[i].id == r['eventid']) {
-												data.events[i].posts.push(post);
-												break;
-											}
-										}
-									//	if (data.events[data.events.length - r['eventid']])
-										//	data.events[data.events.length - r['eventid']].posts.push(post);
-									}
-								}
-							}
-									//	console.log("data1:");
-								//		console.log(data);
-										//console.log("end");
-
-							// render the html page sent to the client from ejs file
-							req.engines['ejs'].renderFile('modules/aqh/body/home.ejs', data, (errorEjs, resultEjs) => {
-								if (errorEjs) {
-									req.logger.error(errorEjs);
-									res.sendStatus(500);
-								} else {
-									//console.log(resultEjs);
-									console.log("getAllEvents send");
-									res.send(resultEjs);
-								}
-							});
-
-						});
-
-				});
-
-		//	}
-		//});
-
-			}
+			console.log("getAllEvents send");
+			res.send(resultEjs);
 		}
 	});
-	});
 
-	console.log("getAllEvents end");
 };
 
 exports.getOne = function (req, res) {
@@ -331,6 +401,17 @@ exports.broadcast_notif = function (req, res) {
   }
 
 
+};
+
+exports.validatePost = function(req, res){
+	console.log("validatePost");
+	req.database.query('UPDATE AQHposts SET validated=true WHERE id = ?;', [req.body.id], (error, result) => {
+		if (error) {
+			req.logger.error(error);
+		} else {
+			res.sendStatus(200);
+		}
+	});
 };
 
 /*exports.getALLData = function (req, res) {

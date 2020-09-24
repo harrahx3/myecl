@@ -92,8 +92,19 @@
 			"enctype": "urlencoded"
 		},
 		"authorisation": ""
-	},
-	{
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "validatePost"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/aqh/validatePost",
+			"method": "POST" ,
+			"enctype": "urlencoded"
+		},
+		"authorisation": {"groups": [{"name":"admin"}, {"name":"bde"}]}
+	}, {
 		"call": {
 			"type": "callback",
 			"location": "subscribe"

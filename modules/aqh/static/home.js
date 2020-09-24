@@ -99,6 +99,22 @@ $(document).on('click', '.deletePost', function () {
 	});
 });
 
+$(document).on('click', '.validatePost', function () {
+//	broadcastPushNotification();
+
+	var id = $(this).attr('id');
+	$.post('/module/aqh/validatePost', {
+		id: id
+	}, (result) => {
+		//loadNews();
+	/*	$.get('/module/aqh/getAllEvents', (result) => {
+			$("#main-content-wrapper").html(result);
+		});
+		*/
+		relocate('internal', 'aqh', 'home');
+	});
+});
+
 $(document).on('click', '.deleteComment', function () {
 //	// broadcastPushNotification();
 	var id = $(this).attr('id');

@@ -52,11 +52,7 @@
     <div id="event<%= event.id %>" class="tab-pane fade" >
 
 
-      <p class='text-center'>
-        <span class='lead'> <%=event.title %></span><br>
-      </p>
-
-    <!--  <div class='col-md-6 col-md-offset-3'>
+     <div class='col-md-6 col-md-offset-3'>
         <p class='text-center'>
           <span class='lead'> <%=event.title %></span><br>
           <span><i> <%=event.content%> </i></span>
@@ -66,7 +62,7 @@
            <span>Organisateur : <%=event.organisateur%> &emsp;&ensp;Lieu : <%=event.location%> </span>
          </p>
        </div>
--->
+
       <% if (event.admin) { %>
         <div class="col-md-offset-2 col-md-8">
         	<form class="form-horizontal" method="post">
@@ -122,6 +118,9 @@
                       <td><button class='btn btn-primary edit' id="<%=event.posts[i].id%>">Editer</button></td>
                       <td><button class='btn btn-danger deletePost' id="<%=event.posts[i].id%>">Supprimer</button></td>
                     <% } %>
+                    <% if (user.isAdminOrBde && !event.posts[i].validated) {%>
+                      <td><button class='btn btn-danger validatePost' id="<%=event.posts[i].id%>">Valider et publier</button></td>
+                  <%  }%>
                   </tr>
                 </h4>
                 <p><%-event.posts[i].content%></p>
