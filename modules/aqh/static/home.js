@@ -157,7 +157,9 @@ $(".addPost").click(function (e) {
 
 	var selector = "#content"+event_id;
 
-	var content = $(selector).code();
+  var content = $(selector).code();
+  //var content = $(selector).summernote('code');
+
 	console.log(content);
 
 	if (post_id > 0) {
@@ -172,7 +174,8 @@ $(".addPost").click(function (e) {
 			eventid: event_id
 		});
 	}
-	$(selector).code('<p><br></p>');
+  $(selector).code('<p><br></p>');
+	//$(selector).summernote(code, '<p><br></p>');
 //	loadNews();
 /*	$.get('/module/aqh/getAllEvents', (result) => {
 		$("#main-content-wrapper").html(result);

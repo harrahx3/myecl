@@ -49,7 +49,8 @@
 			"location": "home"
 		},
 		"includes": {
-			"scripts": ["static/home.js", "static/summernote.min.js"]
+			"scripts": ["static/home.js"],
+			"styles": ["static/home.css"]
 		},
 		"authorisation": ""
 	}, {

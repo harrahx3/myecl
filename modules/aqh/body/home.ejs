@@ -9,7 +9,8 @@
 <!-- include summernote css/js-->
 <!--<link href="summernote.css" rel="stylesheet">
 <script src="summernote.js"></script>-->
-
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.js" charset="utf-8"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.css">
 
 <!-- tab list -->
 <ul class="nav nav-pills nav-pills-custom-minimal custom-minimal-bottom" role="tablist">
@@ -68,6 +69,11 @@
         	<form class="form-horizontal" method="post">
         		<div class="form-group">
         			<div class="col-md-12">
+                <p>En cas de bug:</p>
+                <p>Recharger le module si l'éditeur de texte ne s'affiche pas</p>
+                <p>Ajouter une video:&lt;p&gt;&lt;iframe src='//www.youtube.com/lien' class='note-video-clip' width='640' height='360' frameborder='0'&gt;&lt;/iframe&gt;&lt;/p&gt;</p>
+                <p>Ajouter un lien: &lt;a href="http://google.com" target="_blank"&gt;texte_à_afficher&lt;/a&gt;</p>
+                <p>Ajouter une image: par copier/coller ou drag&drop de l'image (ou éventuellement avec une balise img si elle est hébérgée en ligne)</p>
         				<div class="summernote" id="content<%=event.id%>"></div>
         				<input type="hidden" name="curfcn rent" id="current" value="-1" />
         			</div>
