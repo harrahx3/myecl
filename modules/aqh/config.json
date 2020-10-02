@@ -9,23 +9,14 @@
 		"email": "victor.creuzet@ecl19.ec-lyon.fr"
 	},
 	"tables": [{
-		"name": "AQHevents",
-		"schema": {
-			"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
-			"title": "TEXT",
-			"content": "TEXT",
-			"date": "TEXT",
-			"author": "INT"
-		}
-	},
-	{
 		"name": "AQHposts",
 		"schema": {
 			"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
 			"eventid": "INT",
 			"content": "TEXT",
 			"date": "TEXT",
-			"author": "INT"
+			"author": "INT",
+			"validated": "tinyint(1)"
 		}
 	},
 	{
