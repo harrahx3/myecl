@@ -1,0 +1,15 @@
+{
+  "background_color": "#360012",
+  "description": "MyECL PWA",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "commons/img/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "name": "MyECL",
+  "short_name": "MyECL",
+  "start_url": "/"
+}

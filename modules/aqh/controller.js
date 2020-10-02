@@ -1,5 +1,10 @@
 const xss = require("xss"); // Protect against Cross-site scripting
 const webPush = require('web-push'); // Send Push notifications
+//subscriptions = [];
+const publicVapidKey = "BH3iIFAa05KHsYCDND5vXpa_MqRALURmWGpRX3dg5lBaxS6WQXEzJdhda3_dNAoKR3OD8txdiM2Op9mv-71eXPs";
+const privateVapidKey = "RXWqNvNVXov5HWdrxlM-dLG9TyBkYsStahQhiWLrrr0";
+webPush.setVapidDetails('mailto:hyacinthemen@gmail.com', publicVapidKey, privateVapidKey);
+
 //console.log(xss.whiteList);
 
 /*var h = '<img src="/myimg/img.png" alt="abc"><p>gras</p><script>alert("xss");</script>';
@@ -8,12 +13,74 @@ h = xss(h);
 console.log(h);*/
 
 
+
+exports.subscribe = function(req, res){
+	console.log("add sub");
+	req.database.query('SELECT * FROM pushSubscriptions WHERE sub=?;', [req.body.content], (error, result) => {
+		if (error) {
+			req.logger.error(error);
+		} else {
+			if (!result.length) {
+				req.database.query('INSERT INTO pushSubscriptions (sub) VALUES (?);', [req.body.content], (error2, result2) => {
+					if (error2) {
+						req.logger.error(error2);
+					} else {
+						res.sendStatus(200);
+					}
+				});
+			}
+		}
+	});
+};
+
+exports.broadcast_notif = function(req, res){
+	console.log("broadcast_notif");
+	req.database.query('SELECT * FROM pushSubscriptions;', [], (error, result) => {
+		console.log(result.length);
+		if (error) {
+			req.logger.error(error);
+		} else {
+			const payload = JSON.stringify({
+				title: req.body.title
+			});
+			for (var i = 0; i < result.length; i++) {
+				console.log("send");
+				webPush.sendNotification(JSON.parse(result[i].sub), payload)
+					.catch(err => console.error(err));
+			}
+			res.sendStatus(200);
+		}
+	});
+};
+
+ function broadcastPushotif(req, res, msg){
+	console.log("broadcastPushotif");
+	req.database.query('SELECT * FROM pushSubscriptions;', [], (error, result) => {
+		console.log(result.length);
+		if (error) {
+			req.logger.error(error);
+		} else {
+			const payload = JSON.stringify({
+				title: msg
+			});
+			for (var i = 0; i < result.length; i++) {
+				console.log("send");
+				webPush.sendNotification(JSON.parse(result[i].sub), payload)
+					.catch(err => console.error(err));
+			}
+		//	res.sendStatus(200);
+		}
+	});
+};
+
+
 exports.addComment = function (req, res) {
 	console.log("addComment");
 	req.database.query('INSERT INTO AQHcomments (content, date, author, postid) VALUES (?, NOW(), ?, ?);', [req.body.content, req.user.id, req.body.postid], (error, result) => {
 		if (error) {
 			req.logger.error(error);
 		} else {
+			broadcastPushotif(req, res, req.user.id+"a commenté un post sur AQH");
 			res.sendStatus(200);
 		}
 	});
@@ -24,7 +91,7 @@ exports.addComment = function (req, res) {
 loadUserData = async function (req, res) {
 	return new Promise((resolve, reject) => {
 
-		var updated = false;
+	//	var updated = false;
 
 		var	id = req.user.id;
 		console.log(id);
@@ -37,14 +104,12 @@ loadUserData = async function (req, res) {
 				if (result.length) {
 					var data = new Object();
 					data.found = true;
-					data.updated = updated;
-					data.editable = id == req.user.id;
+				//	data.updated = updated;
+					data.isCurentUser = id == req.user.id;
 					data.id = id;
-					for (let entry in result[0]) {
-						if (entry != 'password') {
+					for (let entry in result[0])
+						if (entry != 'password')
 							data[entry] = result[0][entry]
-						}
-					}
 
 					data.assos = new Array();
 					var promises = new Array();
@@ -213,11 +278,6 @@ loadEventsData = async function (req, res) {
 	for (var i = 0; i < user_data.assos.length; i++)
 		user_data.isAdminOrBde = user_data.isAdminOrBde || user_data.assos[i].name=='admin' || user_data.assos[i].name=='bde';
 
-	subscriptions = [];
-	const publicVapidKey = "BH3iIFAa05KHsYCDND5vXpa_MqRALURmWGpRX3dg5lBaxS6WQXEzJdhda3_dNAoKR3OD8txdiM2Op9mv-71eXPs";
-	const privateVapidKey = "RXWqNvNVXov5HWdrxlM-dLG9TyBkYsStahQhiWLrrr0";
-	webPush.setVapidDetails('mailto:hyacinthemen@gmail.com', publicVapidKey, privateVapidKey);
-
 	// Il faut absolument utiliser les promesses sinon le code continue et 'data' est vide au moment de générer le ejs
 	let promise = loadEventsData(req, res); // grande fonction lente avec plusieurs appels à la base de données
 	let data = await promise; // wait until the promise resolves (*)
@@ -322,6 +382,7 @@ exports.addPost = function (req, res) {
 		if (error) {
 			req.logger.error(error);
 		} else {
+			broadcastPushotif(req, res, req.user.id+"a posté sur AQH");
 			res.sendStatus(200);
 		}
 	});
@@ -339,7 +400,7 @@ exports.update = function (req, res) {
 	});
 };
 
-exports.deletePost = function (req, res) {
+var delPost = function (req, res) {
 	console.log("delete post");
 	req.database.query('DELETE FROM AQHcomments WHERE postid = ?', [req.body.id], (error, result) => {
 		if (error) {
@@ -350,11 +411,17 @@ exports.deletePost = function (req, res) {
 				if (error) {
 					req.logger.error(error);
 				} else {
-					res.sendStatus(200);
+					return;
 				}
 			});
 		}
 	});
+};
+
+exports.deletePost = function (req, res) {
+	console.log("delete post");
+	delPost(req, res);
+	res.sendStatus(200);
 };
 
 exports.deleteComment = function (req, res) {
@@ -368,7 +435,7 @@ exports.deleteComment = function (req, res) {
 	});
 };
 
-
+/*
 exports.subscribe = function (req, res) {
 	console.log("subscribe");
 
@@ -382,7 +449,8 @@ exports.subscribe = function (req, res) {
 	console.log(subscriptions);
 
 };
-
+*/
+/*
 exports.broadcast_notif = function (req, res) {
 	console.log("broadcast received");
 
@@ -402,7 +470,7 @@ exports.broadcast_notif = function (req, res) {
 
 
 };
-
+*/
 exports.validatePost = function(req, res){
 	console.log("validatePost");
 	req.database.query('UPDATE AQHposts SET validated=true WHERE id = ?;', [req.body.id], (error, result) => {

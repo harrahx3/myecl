@@ -93,6 +93,55 @@ module.exports = (context, app) => {
 		});
 	});
 
+// sync icalendar
+	app.get(['/ical'], context.bouncer('visitor'), (req, res) => {
+		console.log(req);
+		console.log(req.database);
+
+		var	calendar = "BEGIN:VCALENDAR\n";
+		calendar += "VERSION:2.0\n";
+		calendar += "PRODID:myecl\n";
+		calendar += "X-PUBLISHED-TTL:P1W\n";
+
+		req.database.query("SELECT id, title, description, location, DATE_FORMAT(start, '%Y%m%eT%k%i%sZ') as start, DATE_FORMAT(end, '%Y%m%eT%k%i%sZ') as end FROM BDECalendar;", [], (error, result) => {
+			if (error) {
+				req.logger.error(error);
+				res.sendStatus(500);
+			} else {
+				for (var i = 0; i < result.length; i++) {
+					console.log(result[i].title);
+					calendar += "BEGIN:VEVENT\n";
+					calendar += "UID:"+result[i].id+"\n";
+					calendar += "DTSTART:"+result[i].start+"\n";
+					calendar += "SEQUENCE:0\n";
+					calendar += "TRANSP:OPAQUE\n";
+					calendar += "DTEND:"+result[i].end+"\n";
+					calendar += "SUMMARY:" + result[i].title +"\n";
+					calendar += "CLASS:PUBLIC\n";
+					calendar += "DESCRIPTION:" + result[i].description +"\, "+ result[i].location + "\n";
+					//calendar += "DTSTAMP:20201002T073024Z\n";
+					calendar += "END:VEVENT\n";
+				}
+				calendar += "END:VCALENDAR";
+				res.send(calendar);
+			}
+	//	req.body.id
+		})
+
+	});
+
+
+	app.get(['/sw.js'], context.bouncer('visitor'), (req, res) => {
+		res.sendFile(req.url, {
+			root: context.privatePath
+		}, (error) => {
+			if (error) {
+				console.log(error);
+				res.redirect('/forbidden');
+			}
+		});
+	});
+
 	// signup
 	app.get('/signup', context.bouncer('visitor'), signupController.load);
 	app.post('/signup', context.bouncer('visitor'), bodyParser.urlencoded({

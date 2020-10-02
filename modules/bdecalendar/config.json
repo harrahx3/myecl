@@ -72,6 +72,24 @@
 	}, {
 		"call": {
 			"type": "callback",
+			"location": "deleteOldEvents"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/bdecalendar/deleteOldEvents"
+		}
+	},{
+		"call": {
+			"type": "callback",
+			"location": "iCal"
+		},
+		"viewport": {
+			"type": "external",
+			"location": "/module/bdecalendar/iCal"
+		}
+	}, {
+		"call": {
+			"type": "callback",
 			"location": "add"
 		},
 		"viewport": {
@@ -84,11 +102,11 @@
 	}, {
 		"call": {
 			"type": "callback",
-			"location": "delete"
+			"location": "deleteEvent"
 		},
 		"viewport": {
 			"type": "external",
-			"location": "/module/bdecalendar/delete",
+			"location": "/module/bdecalendar/deleteEvent",
 			"method": "POST",
 			"enctype": "urlencoded"
 		},

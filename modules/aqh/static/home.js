@@ -29,7 +29,6 @@ function urlBase64ToUint8Array(base64String) {
       return outputArray;
     }
 
-  //  const publicVapidKey = 'BH3iIFAa05KHsYCDND5vXpa_MqRALURmWGpRX3dg5lBaxS6WQXEzJdhda3_dNAoKR3OD8txdiM2Op9mv-71eXPs';
 
 
     async function triggerPushNotificationSubscription() {
@@ -37,6 +36,7 @@ function urlBase64ToUint8Array(base64String) {
         const register = await navigator.serviceWorker.register('/sw.js', {
           scope: '/'
         });
+        const publicVapidKey = 'BH3iIFAa05KHsYCDND5vXpa_MqRALURmWGpRX3dg5lBaxS6WQXEzJdhda3_dNAoKR3OD8txdiM2Op9mv-71eXPs';
 
         const subscription = await register.pushManager.subscribe({
           userVisibleOnly: true,
@@ -62,11 +62,11 @@ function urlBase64ToUint8Array(base64String) {
     }
 
 
-    async function broadcastPushNotification() {
+    async function broadcastPushNotification(msg) {
       /*  await fetch('module/aqh/broadcast_notif', {
           method: 'GET'
         });*/
-				$.get('/module/aqh/broadcast_notif', {})
+				$.post('/module/aqh/broadcast_notif', {title: msg});
     }
 
 
@@ -141,7 +141,7 @@ $(document).on('click', '.edit', function () {
 });
 
 $(".addPost").click(function (e) {
-	broadcastPushNotification();
+	//broadcastPushNotification();
 
 //$(document).on('click', '.add', function () {
 
@@ -157,8 +157,8 @@ $(".addPost").click(function (e) {
 
 	var selector = "#content"+event_id;
 
-  var content = $(selector).code();
-  //var content = $(selector).summernote('code');
+  //var content = $(selector).code();
+  var content = $(selector).summernote('code');
 
 	console.log(content);
 
@@ -174,13 +174,14 @@ $(".addPost").click(function (e) {
 			eventid: event_id
 		});
 	}
-  $(selector).code('<p><br></p>');
-	//$(selector).summernote(code, '<p><br></p>');
+  //$(selector).code('<p><br></p>');
+	$(selector).summernote('code', '<p><br></p>');
 //	loadNews();
 /*	$.get('/module/aqh/getAllEvents', (result) => {
 		$("#main-content-wrapper").html(result);
 	});*/
-	relocate('internal', 'aqh', 'home');
+	//relocate('internal', 'aqh', 'home');
+  relocate('/user#event20');
 });
 
 $(".addComment").click(function (e) {

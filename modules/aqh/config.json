@@ -49,7 +49,7 @@
 			"location": "home"
 		},
 		"includes": {
-			"scripts": ["static/home.js"],
+			"scripts": ["static/home.js", "static/sw.js"],
 			"styles": ["static/home.css"]
 		},
 		"authorisation": ""
@@ -79,7 +79,9 @@
 		},
 		"viewport": {
 			"type": "external",
-			"location": "/module/aqh/broadcast_notif"
+			"location": "/module/aqh/broadcast_notif",
+			"method": "POST",
+			"enctype": "urlencoded"
 		}
 	}, {
 		"call": {

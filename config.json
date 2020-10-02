@@ -1,0 +1,86 @@
+{
+	"port": 443,
+	"url": "192.168.1.31",
+
+	"rootPath": "/home/hyacinthe/myecl",
+
+	"tokenLife": 600,
+	"sessionLife": 3600,
+	"jwt": "secret",
+
+	"database": {
+		"host": "localhost",
+		"user": "hyacinthe",
+		"password": "2699Cendrennes@",
+		"database": "myecl"
+	},
+
+	"tables": [{
+			"name": "core_user",
+			"schema": {
+				"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
+				"login": "VARCHAR(12)",
+				"password": "VARCHAR(60)",
+				"name": "VARCHAR(32)",
+				"firstname": "VARCHAR(64)",
+				"nick": "VARCHAR(20)",
+				"birth": "DATE",
+				"promo": "INT",
+				"floor": "VARCHAR(5)",
+				"email": "TEXT",
+				"picture": "TEXT",
+				"online": "BOOLEAN",
+				"last_seen": "DATETIME"
+			}
+		},
+		{
+			"name": "core_membership",
+			"schema": {
+				"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
+				"id_user": "INT NOT NULL",
+				"id_group": "INT NOT NULL",
+				"position": "VARCHAR(50)",
+				"term": "VARCHAR(50)"
+			}
+		},
+		{
+			"name": "core_group",
+			"schema": {
+				"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
+				"name": "VARCHAR(127) UNIQUE",
+				"description": "TEXT"
+			},
+			"init": [
+				"REPLACE INTO core_group (id, name, description) VALUES (1, 'admin', 'Administrateurs du site');",
+				"UPDATE core_group SET id = 1 WHERE name = 'admin';",
+				"REPLACE INTO core_group (id, name, description) VALUES (2, 'ecl', 'Centraliens de Lyon');",
+				"UPDATE core_group SET id = 2 WHERE name = 'ecl';"
+			]
+		},
+		{
+			"name": "core_token",
+			"schema": {
+				"token": "VARCHAR(256)",
+				"login": "VARCHAR(12)",
+				"time": "BIGINT UNSIGNED"
+			}
+		}
+	],
+
+	"casConfig": {
+		"cas_url": "https://cas.ec-lyon.fr/cas",
+		"service_url": "http://localhost:80",
+		"cas_version": "2.0",
+		"session_name": "login_dsi",
+		"session_info": "user_data"
+	},
+
+	"internalRoute": "/user/MODULENAME/LOCATION",
+	"externalRoute": "LOCATION",
+	"scriptsRoute": "/scripts/MODULENAME/LOCATION",
+	"stylesRoute": "/styles/MODULENAME/LOCATION",
+	"miscRoute": "/misc/MODULENAME/LOCATION",
+	"includesModuleRoute": "/includes/MODULENAME",
+	"includesRuleRoute": "/includes/MODULENAME/LOCATION",
+	"contactRoute": "/contact/MODULENAME"
+}

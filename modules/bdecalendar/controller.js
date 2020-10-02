@@ -59,6 +59,7 @@ exports.getAll = function (req, res) {
 
 
 exports.add = function (req, res) {
+	delOldEvents();
 //	var i=getGroupId(req, res, "wei");
 	req.database.query("INSERT INTO BDECalendar (title, description, start, end, organisation, location, target, organisationid, targetid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [req.body.title, req.body.description, req.body.start, req.body.end, req.body.organisation, req.body.location, req.body.target, req.body.organisation, req.body.target], (error, result) => {
 		if (error) {
@@ -70,7 +71,8 @@ exports.add = function (req, res) {
 	});
 };
 
-exports.delete = function (req, res) {
+
+delEvent = function (req, res) {
 
 	req.database.query('SELECT id FROM AQHposts WHERE eventid = ?', [parseInt(req.body.id)], (error, result) => {
 		if (error) {
@@ -99,15 +101,10 @@ exports.delete = function (req, res) {
 								req.logger.error(error);
 								res.sendStatus(500);
 							}
-
 						});
-
 					}
-
 				});
-
 			}
-
 		}
 	});
 
@@ -124,10 +121,20 @@ exports.delete = function (req, res) {
 			req.logger.error(error);
 			res.sendStatus(500);
 		} else {
-			res.sendStatus(200);
+			return true;
 		}
 	});
 };
+
+
+exports.deleteEvent = function (req, res) {
+	if (delEvent(req, res)) {
+		res.sendStatus(200);
+	} else {
+		res.sendStatus(500);
+	}
+};
+
 
 exports.getGroups = function (req, res){
 	console.log("getGroups");
@@ -150,4 +157,52 @@ exports.getGroups = function (req, res){
 				res.send(events);
 			}
 		});
+};
+
+delOldEvents = function(){
+	console.log("delOldEvents");
+	req.database.query('SELECT id, title, end FROM BDECalendar WHERE end<=NOW();', [], (error, result) => {
+		if (error) {
+			req.logger.error(error);
+			return false;
+		} else {
+			for (var i = 0; i < result.length; i++) {
+				console.log(result[i].title);
+				req.body={};
+				req.body.id = result[i].id;
+				delEvent(req, res);
+			}
+			return true;
+		}
+//	req.body.id
+	})
+};
+
+exports.deleteOldEvents = function  (req, res){
+	console.log("deleteOldEvents");
+		if (delOldEvents()) {
+			res.sendStatus(200);
+		} else {
+			res.sendStatus(500);
+		}
+};
+
+exports.iCal = function (req, res){
+	var	calendar = "BEGIN:VCALENDAR"
+	calendar += "VERSION:2.0"
+	calendar += "PRODID:myecl"
+	calendar += "X-PUBLISHED-TTL:P1W"
+	calendar += "BEGIN:VEVENT"
+	calendar += "UID:5f76d70fe8d4c"
+	calendar += "DTSTART:20200902T060000Z"
+	calendar += "SEQUENCE:0"
+	calendar += "TRANSP:OPAQUE"
+	calendar += "DTEND:20200902T080000Z"
+	calendar += "SUMMARY:MyPhysique\, CM"
+	calendar += "CLASS:PUBLIC"
+	calendar += "DESCRIPTION:MyAMPHI 3_W1\, MME CALLARD Anne-Segolene"
+	calendar += "DTSTAMP:20201002T073024Z"
+	calendar += "END:VEVENT"
+	calendar += "END:VCALENDAR"
+	res.send(calendar);
 };
