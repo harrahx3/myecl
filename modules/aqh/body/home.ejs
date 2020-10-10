@@ -22,7 +22,7 @@
   <% for (event of events) {%>
 
   	<li>
-  		<a href="#event<%= event.id %>" role="tab" data-toggle="tab"><%=event.title%> (<%=event.organisateur%>)</a>
+  		<a href="#event<%= event.id %>" role="tab" data-toggle="tab"><%=event.title%> <span class="badge"><%=event.organisateur%></span></a>
   	</li>
 
   <% } %>
@@ -39,7 +39,12 @@
       <h1 class="display-4">AQH</h1>
       <p class="lead"> A quelle heure ?</p>
       <hr class="my-4">
+
+<!--<button type="button" class="btn btn-lg btn-danger" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Click to toggle popover</button>
+<a tabindex="0" class="btn btn-lg btn-danger" role="button" data-toggle="popover" data-trigger="focus" id="example" title="Dismissible popover" data-content="And here's some amazing content. It's very engaging. Right?">Dismissible popover</a>
+      -->
       <p>Posts info associatif</p>
+
 
     </div>
 
@@ -69,11 +74,14 @@
         	<form class="form-horizontal" method="post">
         		<div class="form-group">
         			<div class="col-md-12">
-                <p>En cas de bug:</p>
-                <p>Recharger le module si l'éditeur de texte ne s'affiche pas</p>
-                <p>Ajouter une video:&lt;p&gt;&lt;iframe src='//www.youtube.com/lien' class='note-video-clip' width='640' height='360' frameborder='0'&gt;&lt;/iframe&gt;&lt;/p&gt;</p>
-                <p>Ajouter un lien: &lt;a href="http://google.com" target="_blank"&gt;texte_à_afficher&lt;/a&gt;</p>
-                <p>Ajouter une image: par copier/coller ou drag&drop de l'image (ou éventuellement avec une balise img si elle est hébérgée en ligne)</p>
+                <div class="alert alert-warning alert-dismissible" role="alert">
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <p>En cas de bug:</p>
+                  <p>Recharger le module si l'éditeur de texte ne s'affiche pas</p>
+                  <p>Ajouter une video:&lt;p&gt;&lt;iframe src='//www.youtube.com/lien' class='note-video-clip' width='640' height='360' frameborder='0'&gt;&lt;/iframe&gt;&lt;/p&gt;</p>
+                  <p>Ajouter un lien: &lt;a href="http://google.com" target="_blank"&gt;texte_à_afficher&lt;/a&gt;</p>
+                  <p>Ajouter une image: par copier/coller ou drag&drop de l'image (ou éventuellement avec une balise img si elle est hébérgée en ligne)</p>
+                </div>
         				<div class="summernote" id="content<%=event.id%>"></div>
         				<input type="hidden" name="curfcn rent" id="current" value="-1" />
         			</div>

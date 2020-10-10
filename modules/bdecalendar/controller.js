@@ -59,7 +59,7 @@ exports.getAll = function (req, res) {
 
 
 exports.add = function (req, res) {
-	delOldEvents();
+	delOldEvents(req, res);
 //	var i=getGroupId(req, res, "wei");
 	req.database.query("INSERT INTO BDECalendar (title, description, start, end, organisation, location, target, organisationid, targetid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [req.body.title, req.body.description, req.body.start, req.body.end, req.body.organisation, req.body.location, req.body.target, req.body.organisation, req.body.target], (error, result) => {
 		if (error) {
@@ -70,6 +70,7 @@ exports.add = function (req, res) {
 		}
 	});
 };
+
 
 
 delEvent = function (req, res) {
@@ -159,7 +160,7 @@ exports.getGroups = function (req, res){
 		});
 };
 
-delOldEvents = function(){
+delOldEvents = function(req, res){
 	console.log("delOldEvents");
 	req.database.query('SELECT id, title, end FROM BDECalendar WHERE end<=NOW();', [], (error, result) => {
 		if (error) {
@@ -180,7 +181,7 @@ delOldEvents = function(){
 
 exports.deleteOldEvents = function  (req, res){
 	console.log("deleteOldEvents");
-		if (delOldEvents()) {
+		if (delOldEvents(req, res)) {
 			res.sendStatus(200);
 		} else {
 			res.sendStatus(500);

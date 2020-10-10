@@ -5,7 +5,21 @@ const publicVapidKey = "BH3iIFAa05KHsYCDND5vXpa_MqRALURmWGpRX3dg5lBaxS6WQXEzJdhd
 const privateVapidKey = "RXWqNvNVXov5HWdrxlM-dLG9TyBkYsStahQhiWLrrr0";
 webPush.setVapidDetails('mailto:hyacinthemen@gmail.com', publicVapidKey, privateVapidKey);
 
-//console.log(xss.whiteList);
+console.log("\n xss.whiteList: \n");
+console.log(xss.whiteList);
+//xss.whiteList.tab += "class";
+whiteList = xss.whiteList;
+whiteList.table.push("class");
+whiteList.table.push("style");
+whiteList.img.push("class");
+whiteList.img.push("style");
+whiteList.img.push("data-filename");
+whiteList.iframe = ["class", "src", "width", "height", "frameborder"];
+
+console.log("\nmodif\n");
+console.log(whiteList);
+//xss.whiteList.img =  [];
+//xss.whiteList.video = [];
 
 /*var h = '<img src="/myimg/img.png" alt="abc"><p>gras</p><script>alert("xss");</script>';
 console.log(h);
@@ -113,7 +127,7 @@ loadUserData = async function (req, res) {
 
 					data.assos = new Array();
 					var promises = new Array();
-					req.database.query("SELECT u.name AS name, u.description AS description, m.position AS position FROM core_membership AS m JOIN core_group AS u ON m.id_group = u.id WHERE m.id_user = ?", [id], function (err2, result2) {
+					req.database.query("SELECT u.name AS name, u.description AS description, m.position AS position, m.isVPCom as isVPCom FROM core_membership AS m JOIN core_group AS u ON m.id_group = u.id WHERE m.id_user = ?", [id], function (err2, result2) {
 						if (err2) {
 							req.logger.warning(error);
 							res.sendStatus(500);
@@ -124,7 +138,8 @@ loadUserData = async function (req, res) {
 										data.assos.push({
 											'name': result2[i]['name'],
 											'description': result2[i]['description'],
-											'position': result2[i]['position']
+											'position': result2[i]['position'],
+											'isVPCom': result2[i]['isVPCom']
 										});
 										resolve();
 									}));
@@ -152,7 +167,7 @@ loadEventsData = async function (req, res) {
 
 		//get all events
 	//	req.database.query('SELECT e.id as id, e.description as content, e.start as date, e.organisationid as author, e.title as title FROM BDECalendar AS e ORDER BY e.start DESC;', (error, result) => {
-			req.database.query('SELECT t.id as id, t.content as content, t.location as location, DATE_FORMAT(t.date, "%W %D %b %Y") as date, DATE_FORMAT(t.start, "%W %D %b %Y") as start, DATE_FORMAT(t.end, "%W %D %b %Y") as end, t.organisationid as author, t.title as title, t.id_user as miduser, g.name AS organisateur FROM (SELECT e.id as id, e.description as content, e.start as date, e.start as start, e.end as end, e.organisationid as organisationid, e.title as title, e.location as location, m.id_user as id_user FROM BDECalendar AS e JOIN core_membership AS m ON e.organisationid=m.id_group) AS t JOIN core_group AS g ON t.organisationid=g.id ORDER BY date DESC;', (error, result) => {
+			req.database.query('SELECT t.id as id, t.content as content, t.isVPCom as isVPCom, t.location as location, DATE_FORMAT(t.date, "%W %D %b %Y") as date, DATE_FORMAT(t.start, "%W %D %b %Y") as start, DATE_FORMAT(t.end, "%W %D %b %Y") as end, t.organisationid as author, t.title as title, t.id_user as miduser, g.name AS organisateur FROM (SELECT e.id as id, e.description as content, e.start as date, e.start as start, e.end as end, e.organisationid as organisationid, e.title as title, e.location as location, m.id_user as id_user, m.isVPCom as isVPCom FROM BDECalendar AS e JOIN core_membership AS m ON e.organisationid=m.id_group) AS t JOIN core_group AS g ON t.organisationid=g.id ORDER BY date DESC;', (error, result) => {
 
 				if (error) {
 					req.logger.error(error);
@@ -162,14 +177,17 @@ loadEventsData = async function (req, res) {
 						events: []
 					};
 
+					console.log("\n result: \n");
+					console.log(result);
+
 					if (result.length) {
 						for (let i in result) {
-							var admin = (result[i]['miduser'] == req.user.id);
+							var admin = (result[i]['miduser'] == req.user.id && result[i]['isVPCom']); 	// is the current user an admin for the current event
 							var event={
 								id: result[i]['id'],
 								date: result[i]['date'],
 								title: xss(result[i]['title']),
-								content: (result[i]['content']),
+								content: xss(result[i]['content'], whiteList),
 								author: xss(result[i]['author']),
 								admin: admin,
 								organisateur: xss(result[i]['organisateur']),
@@ -181,7 +199,6 @@ loadEventsData = async function (req, res) {
 
 							var add=true;
 							for (var j in data.events) {
-								// is the current user an admin for the current event
 								 if (data.events[j].id==event.id) {
 									add=false;
 									if (!data.events[j].admin && admin) {
@@ -228,7 +245,7 @@ loadEventsData = async function (req, res) {
 										for (r of resultQuery) {
 											var post={
 												id: r['id'],
-												content: (r['content']),
+												content: xss(r['content'], whiteList),
 												date: r['date'],
 												author: {id: xss(r['author_id']), name: xss(r['author']), avatar: xss(r['author_avatar'])},
 												eventid: r['eventid'],
@@ -378,11 +395,10 @@ exports.getOne = function (req, res) {
 exports.addPost = function (req, res) {
 	var xss = require("xss");
 	console.log("addPost");
-	req.database.query('INSERT INTO AQHposts (content, date, author, eventid) VALUES (?, NOW(), ?, ?);', [(req.body.content), xss(req.user.id), xss(req.body.eventid)], (error, result) => {
+	req.database.query('INSERT INTO AQHposts (content, date, author, eventid) VALUES (?, NOW(), ?, ?);', [xss(req.body.content, whiteList), xss(req.user.id), xss(req.body.eventid)], (error, result) => {
 		if (error) {
 			req.logger.error(error);
 		} else {
-			broadcastPushotif(req, res, req.user.id+"a posté sur AQH");
 			res.sendStatus(200);
 		}
 	});
@@ -391,7 +407,7 @@ exports.addPost = function (req, res) {
 exports.update = function (req, res) {
 	var xss = require("xss");
 	console.log("update");
-	req.database.query('UPDATE AQHposts SET content = ? WHERE id = ?;', [(req.body.content), xss(req.body.id)], (error, result) => {
+	req.database.query('UPDATE AQHposts SET content = ? WHERE id = ?;', [xss(req.body.content, whiteList), xss(req.body.id)], (error, result) => {
 		if (error) {
 			req.logger.error(error);
 		} else {
@@ -477,6 +493,7 @@ exports.validatePost = function(req, res){
 		if (error) {
 			req.logger.error(error);
 		} else {
+			broadcastPushotif(req, res, "nouveau post sur AQH!");
 			res.sendStatus(200);
 		}
 	});

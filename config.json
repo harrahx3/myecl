@@ -1,6 +1,6 @@
 {
 	"port": 443,
-	"url": "192.168.1.31",
+	"url": "localhost",
 
 	"rootPath": "/home/hyacinthe/myecl",
 
@@ -40,7 +40,8 @@
 				"id_user": "INT NOT NULL",
 				"id_group": "INT NOT NULL",
 				"position": "VARCHAR(50)",
-				"term": "VARCHAR(50)"
+				"term": "VARCHAR(50)",
+				"isVPCom": "bool default false"
 			}
 		},
 		{

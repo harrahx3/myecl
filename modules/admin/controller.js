@@ -127,6 +127,7 @@ exports.searchUser = function (req, res) {
 exports.addMember = function (req, res) {
 	req.database.query("SELECT COUNT(*) AS c FROM core_group WHERE id = ?", [req.body.idGroup], (errorGroup, resultGroup) => {
 		if (errorGroup) {
+			req.logger.error(errorGroup);
 			res.sendStatus(500);
 		} else {
 			if (resultGroup[0].c == 0) {
@@ -136,6 +137,7 @@ exports.addMember = function (req, res) {
 			} else {
 				req.database.query("SELECT COUNT(*) AS c FROM core_user WHERE id = ?", [req.body.idUser], (errorUser, resultUser) => {
 					if (errorUser) {
+						req.logger.error(errorUser);
 						res.sendStatus(500);
 					} else {
 						if (resultUser[0].c == 0) {
@@ -145,6 +147,7 @@ exports.addMember = function (req, res) {
 						} else {
 							req.database.query("SELECT COUNT(*) AS c FROM core_membership WHERE id_group = ? AND id_user = ?;", [req.body.idGroup, req.body.idUser], (errorExists, resultExists) => {
 								if (errorExists) {
+									req.logger.error(errorExists);
 									res.sendStatus(500);
 								} else {
 									if (resultExists[0].c > 0) {
@@ -152,8 +155,11 @@ exports.addMember = function (req, res) {
 											success: 0
 										});
 									} else {
-										req.database.query("INSERT INTO core_membership (id_group, id_user, position, term) VALUES(?, ?, ?, ?)", [req.body.idGroup, req.body.idUser, req.body.position.toLowerCase(), parseInt(req.body.term)], (error, result) => {
+										console.log("req.body.isVPCom: ");
+										console.log(req.body.isVPCom);
+										req.database.query("INSERT INTO core_membership (id_group, id_user, position, term, isVPCom) VALUES(?, ?, ?, ?, ?)", [req.body.idGroup, req.body.idUser, req.body.position.toLowerCase(), parseInt(req.body.term), req.body.isVPCom], (error, result) => {
 											if (error) {
+												req.logger.error(error);
 												res.sendStatus(500);
 											} else {
 												res.json({

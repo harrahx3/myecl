@@ -67,11 +67,14 @@ $("#search").keyup(function () {
 });
 
 $(document).on('click', '.addMember', function () {
+	console.log($("#isVPCom"));
+	console.log($("#isVPCom")[0].checked);
 	$.post('/module/admin/addMember', {
 		idGroup: $('#groupId')[0].value,
 		idUser: $(this).attr('id'),
 		position: $("#position").val(),
-		term: $("#term").val()
+		term: $("#term").val(),
+		isVPCom: $("#isVPCom")[0].checked
 	}, function (result) {
 		if (result.success == -2) {
 			$("#error").html("<br><br><br>Erreur lors de l'ajout : le groupe n'a pas été trouvé");
