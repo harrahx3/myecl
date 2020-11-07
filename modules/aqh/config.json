@@ -37,7 +37,7 @@
 		},
 		"viewport": {
 			"type": "internal",
-			"location": "home"
+			"location": "home/:id"
 		},
 		"includes": {
 			"scripts": ["static/home.js", "static/sw.js"],
@@ -163,7 +163,7 @@
 	"menu": [{
 		"name": "AQH",
 		"type": "internal",
-		"anchor": "home",
+		"anchor": "home/-1",
 		"authorisation": ""
 	}]
 }

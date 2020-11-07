@@ -95,7 +95,7 @@ $(document).on('click', '.deletePost', function () {
 			$("#main-content-wrapper").html(result);
 		});
 		*/
-		relocate('internal', 'aqh', 'home');
+		relocate('internal', 'aqh', 'home/-1');
 	});
 });
 
@@ -111,7 +111,7 @@ $(document).on('click', '.validatePost', function () {
 			$("#main-content-wrapper").html(result);
 		});
 		*/
-		relocate('internal', 'aqh', 'home');
+		relocate('internal', 'aqh', 'home/-1');
 	});
 });
 
@@ -125,7 +125,7 @@ $(document).on('click', '.deleteComment', function () {
 	/*	$.get('/module/aqh/getAllEvents', (result) => {
 			$("#main-content-wrapper").html(result);
 		});*/
-		relocate('internal', 'aqh', 'home');
+		relocate('internal', 'aqh', 'home/-1');
 	});
 });
 
@@ -136,8 +136,9 @@ $(document).on('click', '.edit', function () {
 		id: id
 	}, (result) => {
 		$("#current").val(id);
-		$(".summernote").code(result.content);
-	});
+    //$(".summernote").code(result.content);
+    var selector = "#content"+result.eventid;
+    $(selector).summernote('code', result.content);	});
 });
 
 $(".addPost").click(function (e) {
@@ -180,8 +181,9 @@ $(".addPost").click(function (e) {
 /*	$.get('/module/aqh/getAllEvents', (result) => {
 		$("#main-content-wrapper").html(result);
 	});*/
-	//relocate('internal', 'aqh', 'home');
-  relocate('/user#event20');
+  $("#top_notif_area").html("<div class='alert alert-warning alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>  <p> Votre post à été ajouté et doit être validé par un modérateur avant d\'être visible publiquement</p></div>");
+//	relocate('internal', 'aqh', 'home/-1');
+  //relocate('/user#event20');
 });
 
 $(".addComment").click(function (e) {
@@ -211,7 +213,7 @@ $(".addComment").click(function (e) {
 		/*$.get('/module/aqh/getAllEvents', (result) => {
 			$("#main-content-wrapper").html(result);
 		});*/
-		relocate('internal', 'aqh', 'home');
+		relocate('internal', 'aqh', 'home/-1');
 	}
 
 });
