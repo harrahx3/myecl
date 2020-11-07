@@ -12,16 +12,36 @@
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.js" charset="utf-8"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.css">
 
+
+<% var isShownPost = false
+  for (var i = 0; i < events.length; i++) {
+    isShownPost = events[i].shownPost || isShownPost;
+  }
+%>
+
+<div id="top_notif_area">
+
+</div>
+
+<button type="button" name="button" id="poke" onclick=" message=document.getElementById('text').value; socket.emit('message', message); addmessage('vous', message)">Envoyer</button>
+
+<input type="text" name="" id="text" value="">
+
+<ul id="myList">
+
+</ul>
+
+
 <!-- tab list -->
 <ul class="nav nav-pills nav-pills-custom-minimal custom-minimal-bottom" role="tablist">
 
-  <li class="active">
+  <li <% if(!isShownPost)  {%> class='active' <%} %> >
 		<a href="#presentation" role="tab" data-toggle="tab">Présentation</a>
 	</li>
 
   <% for (event of events) {%>
 
-  	<li>
+  	<li <% if(event.shownPost)  {%> class='active' <%} %> >
   		<a href="#event<%= event.id %>" role="tab" data-toggle="tab"><%=event.title%> <span class="badge"><%=event.organisateur%></span></a>
   	</li>
 
@@ -33,7 +53,7 @@
 <div class="tab-content">
 
   <!-- first tab: presentation -->
-  <div id="presentation" class="tab-pane active in"> <!--  active in"> -->
+  <div id="presentation" <% if(!isShownPost) {%> class='tab-pane active in' <% }else{%> class='tab-pane fade' <%}%>> <!--  active in"> -->
 
     <div class="jumbotron">
       <h1 class="display-4">AQH</h1>
@@ -45,7 +65,6 @@
       -->
       <p>Posts info associatif</p>
 
-
     </div>
 
   <!--  <button type="button" class="btn btn-lg btn-danger" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Click to toggle popover</button>
@@ -55,7 +74,7 @@
   <!-- tab for all events in BDECalendar -->
   <% for (event of events) { %>
 
-    <div id="event<%= event.id %>" class="tab-pane fade" >
+    <div id="event<%= event.id %>" <% if(event.shownPost) {%> class='tab-pane active in' <% }else{%> class='tab-pane fade' <%}%> >
 
 
      <div class='col-md-6 col-md-offset-3'>
@@ -125,7 +144,7 @@
               <div class="media-body" style="padding: 1em; background-color : #EEEEEE;">
                 <h4 class="mt-0">
                   <tr>
-                    <td><p style="font-weight: bold;">Post de <%-event.posts[i].author.name%> le <%-event.posts[i].date%></p></td>
+                    <td><p style="font-weight: bold;">Post de <%-event.posts[i].author.nick%> (<%-event.posts[i].author.firstname%> <%-event.posts[i].author.name%>) le <%-event.posts[i].date%></p></td>
 
                     <%# admin can delete and edit post %>
                     <% if (event.admin) { %>
@@ -134,7 +153,11 @@
                     <% } %>
                     <% if (user.isAdminOrBde && !event.posts[i].validated) {%>
                       <td><button class='btn btn-danger validatePost' id="<%=event.posts[i].id%>">Valider et publier</button></td>
-                  <%  }%>
+                      <div class="alert alert-warning alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <p>Un modérateur doit valider ce post pour qu'il soit visible publiquement</p>
+                      </div>
+                    <% } %>
                   </tr>
                 </h4>
                 <p><%-event.posts[i].content%></p>
@@ -162,7 +185,7 @@
                           </div>
                           <div class="media-body">
                             <h5 class="mt-0">
-                              <%=event.posts[i].comments[j].author.name%> le <%=event.posts[i].comments[j].date%>
+                              <%=event.posts[i].comments[j].author.nick%> (<%=event.posts[i].comments[j].author.firstname%> <%=event.posts[i].comments[j].author.name%>) le <%=event.posts[i].comments[j].date%>
                               <% if (event.admin) { %>
                                 <button class='btn btn-danger deleteComment' id="<%=event.posts[i].comments[j].id%>">Supprimer</button>
                               <% } %>
@@ -186,7 +209,6 @@
           <% } %>
 
         </ul>
-
 
       </div>
     </div>

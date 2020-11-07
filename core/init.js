@@ -8,10 +8,12 @@ const express = require('express');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 
+
 module.exports.launch = (context) => {
 	// building app and adding basic utilities
 
 	var app = express();
+	//const io = require('socket.io')();
 	app.use(helmet());
 	app.use(cookieParser());
 	app.use('/*', (req, res, next) => {
@@ -27,6 +29,9 @@ module.exports.launch = (context) => {
 
 	// handling routes
 	require('./router')(context, app);
+
+
+
 
 	// starting server
 	app.listen(context.port, context.url, () => {

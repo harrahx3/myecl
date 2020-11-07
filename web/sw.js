@@ -2,8 +2,10 @@ self.addEventListener('push', event => {
    const data = event.data.json();
 //c
    self.registration.showNotification(data.title, {
-     body: 'Yay it works!',
-     vibrate: [300,200,400]
+     body: 'Yay it works!!!',
+     vibrate: [300,200,400],
+     icon: 'https://cdn.discordapp.com/attachments/643847353756942347/700767584684998736/Logo-ECLAIR_1.ai',
+     image: 'https://i.ytimg.com/vi/HgCXdNhVC1Q/default.jpg'
    });
  });
 /*

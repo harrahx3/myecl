@@ -74,7 +74,7 @@ $(document).on('click', '.addMember', function () {
 		idUser: $(this).attr('id'),
 		position: $("#position").val(),
 		term: $("#term").val(),
-		isVPCom: $("#isVPCom")[0].checked
+		isVPCom: ($("#isVPCom")[0].checked ? 1 : 0)
 	}, function (result) {
 		if (result.success == -2) {
 			$("#error").html("<br><br><br>Erreur lors de l'ajout : le groupe n'a pas été trouvé");

@@ -1,0 +1,78 @@
+{
+	"description": "module AQH",
+	"authorisation": "",
+	"beta": true,
+	"contact": {
+		"firstname": "Victor",
+		"lastname": "Creuzet",
+		"phone": "",
+		"email": "victor.creuzet@ecl19.ec-lyon.fr"
+	},
+	"tables": [{
+		"name": "FabLabAdherents",
+		"schema": {
+			"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
+			"userid": "INT",
+			"solde": "INT"
+		}
+	}, {
+		"name": "FablabProducts",
+		"schema": {
+			"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
+			"name": "INT",
+			"type": "INT"
+		}
+	}],
+	"includes": {},
+	"rules": [{
+		"call": {
+			"type": "callback",
+			"location": "getHomePage"
+		},
+		"viewport": {
+			"type": "internal",
+			"location": "home"
+		},
+		"includes": {
+			"scripts": ["static/home.js"],
+			"styles": ["static/home.css"]
+		},
+		"authorisation": ""
+	}, {
+		"call": {
+			"type": "callback",
+			"location": "getAdminPage"
+		},
+		"viewport": {
+			"type": "internal",
+			"location": "admin"
+		},
+		"includes": {
+			"scripts": ["static/admin.js"],
+			"styles": ["static/admin.css"]
+		},
+		"authorisation": "fablab"
+	} ],
+	"menu": [{
+		"name": "Fablab",
+		"type": "internal",
+		"anchor": "home",
+		"authorisation": {
+			"groups": "fablab",
+			"negation": true
+		}
+	}, {
+		"name": "Fablab",
+		"type": "submenu",
+		"anchor": [{
+			"name": "Page publique",
+			"type": "internal",
+			"anchor": "home"
+		}, {
+			"name": "Administration",
+			"type": "internal",
+			"anchor": "admin"
+		}],
+		"authorisation": "fablab"
+	}]
+}

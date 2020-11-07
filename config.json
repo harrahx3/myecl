@@ -1,6 +1,6 @@
 {
-	"port": 443,
-	"url": "localhost",
+	"port": 80,
+	"url": "192.168.1.31",
 
 	"rootPath": "/home/hyacinthe/myecl",
 

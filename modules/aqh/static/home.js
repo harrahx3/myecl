@@ -13,6 +13,37 @@
   </div>
 */
 
+var socket = io.connect('https://localhost');
+
+//var pseudo = prompt('Quel est votre pseudo ?');
+//socket.emit('petit_nouveau', pseudo);
+
+socket.on('message', function(obj) {
+    console.log('Le serveur a un message pour vous : ' + obj.message);
+    addmessage(obj.pseudo, obj.message);
+});
+socket.on('autre', function(message) {
+    console.log('Le serveur a un message pour vous : ' + message);
+});
+
+socket.on('nouveau', function(pseudo) {
+    console.log(pseudo + ' a rejoint ');
+    addmessage(pseudo, "a rejoint le chat.")
+});
+/*  var button = getElementById('#poke');
+
+button.click(function () {
+    socket.emit('message', 'Salut serveur, ça va ?');
+});*/
+
+function addmessage(pseudo, message) {
+  var node = document.createElement("LI");                 // Create a <li> node
+  var textnode = document.createTextNode(pseudo + ': ' + message);         // Create a text node
+  node.appendChild(textnode);                              // Append the text to <li>
+  document.getElementById("myList").appendChild(node);     // Append <li> to <ul> with id="myList"
+};
+
+
 
 function urlBase64ToUint8Array(base64String) {
       const padding = '='.repeat((4 - base64String.length % 4) % 4);
@@ -101,7 +132,6 @@ $(document).on('click', '.deletePost', function () {
 
 $(document).on('click', '.validatePost', function () {
 //	broadcastPushNotification();
-
 	var id = $(this).attr('id');
 	$.post('/module/aqh/validatePost', {
 		id: id
@@ -111,12 +141,12 @@ $(document).on('click', '.validatePost', function () {
 			$("#main-content-wrapper").html(result);
 		});
 		*/
-		relocate('internal', 'aqh', 'home');
+		relocate('internal', 'aqh', 'home/-1');
 	});
 });
 
 $(document).on('click', '.deleteComment', function () {
-//	// broadcastPushNotification();
+	// broadcastPushNotification();
 	var id = $(this).attr('id');
 	$.post('/module/aqh/deleteComment', {
 		id: id
@@ -125,7 +155,7 @@ $(document).on('click', '.deleteComment', function () {
 	/*	$.get('/module/aqh/getAllEvents', (result) => {
 			$("#main-content-wrapper").html(result);
 		});*/
-		relocate('internal', 'aqh', 'home');
+		relocate('internal', 'aqh', 'home/-1');
 	});
 });
 
@@ -136,15 +166,15 @@ $(document).on('click', '.edit', function () {
 		id: id
 	}, (result) => {
 		$("#current").val(id);
-		$(".summernote").code(result.content);
+		//$(".summernote").code(result.content);
+    var selector = "#content"+result.eventid;
+    $(selector).summernote('code', result.content);
 	});
 });
 
 $(".addPost").click(function (e) {
 	//broadcastPushNotification();
-
 //$(document).on('click', '.add', function () {
-
 	console.log("click add Post button");
 	e.preventDefault();
 
@@ -180,15 +210,14 @@ $(".addPost").click(function (e) {
 /*	$.get('/module/aqh/getAllEvents', (result) => {
 		$("#main-content-wrapper").html(result);
 	});*/
-	//relocate('internal', 'aqh', 'home');
-  relocate('/user#event20');
+  $("#top_notif_area").html("<div class='alert alert-warning alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>  <p> Votre post à été ajouté et doit être validé par un modérateur avant d\'être visible publiquement</p></div>");
+//	relocate('internal', 'aqh', 'home/-1');
+  //relocate('/user#event20');
 });
 
 $(".addComment").click(function (e) {
 	// broadcastPushNotification();
-
 //$(document).on('click', '.add', function () {
-
 	console.log("click addComment button");
 	e.preventDefault();
 
@@ -211,7 +240,7 @@ $(".addComment").click(function (e) {
 		/*$.get('/module/aqh/getAllEvents', (result) => {
 			$("#main-content-wrapper").html(result);
 		});*/
-		relocate('internal', 'aqh', 'home');
+		relocate('internal', 'aqh', 'home/-1');
 	}
 
 });

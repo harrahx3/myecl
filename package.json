@@ -9,6 +9,7 @@
 		"bcrypt": "^5.0.0",
 		"cookie-parser": "^1.4.3",
 		"ejs": "^2.6.1",
+		"ent": "^2.2.0",
 		"express": "^4.16.4",
 		"fs": "0.0.1-security",
 		"helmet": "^3.15.0",

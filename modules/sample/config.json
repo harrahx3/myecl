@@ -33,6 +33,6 @@
 	"menu": [{
 		"name": "Lien interne",
 		"type": "external",
-		"anchor": "/essai"
+		"anchor": "http://www.google.fr"
 	}]
 }

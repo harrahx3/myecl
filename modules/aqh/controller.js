@@ -6,7 +6,7 @@ const privateVapidKey = "RXWqNvNVXov5HWdrxlM-dLG9TyBkYsStahQhiWLrrr0";
 webPush.setVapidDetails('mailto:hyacinthemen@gmail.com', publicVapidKey, privateVapidKey);
 
 console.log("\n xss.whiteList: \n");
-console.log(xss.whiteList);
+//console.log(xss.whiteList);
 //xss.whiteList.tab += "class";
 whiteList = xss.whiteList;
 whiteList.table.push("class");
@@ -16,8 +16,8 @@ whiteList.img.push("style");
 whiteList.img.push("data-filename");
 whiteList.iframe = ["class", "src", "width", "height", "frameborder"];
 
-console.log("\nmodif\n");
-console.log(whiteList);
+//console.log("\nmodif\n");
+//console.log(whiteList);
 //xss.whiteList.img =  [];
 //xss.whiteList.video = [];
 
@@ -163,6 +163,8 @@ loadUserData = async function (req, res) {
 
 loadEventsData = async function (req, res) {
 	return new Promise((resolve, reject) => {
+		var shownPostId = req.params.id;
+
 		req.database.query("SET lc_time_names = 'fr_FR';", (errorl, resultl) => { // Pour tenter de formater les dates en francais
 
 		//get all events
@@ -194,6 +196,7 @@ loadEventsData = async function (req, res) {
 								start: result[i]['start'],
 								end: result[i]['end'],
 								location: result[i]['location'],
+								shownPost: result[i]['id'] == shownPostId,
 								posts: []
 							};
 
@@ -216,7 +219,7 @@ loadEventsData = async function (req, res) {
 
 						//get all the comments
 						var comments = [];
-						req.database.query('SELECT c.id as id, c.content as content, DATE_FORMAT(c.date, "%D %b") as date, u.nick as author, u.id as author_id, c.postid as postid, u.picture as author_avatar FROM AQHcomments AS c JOIN core_user AS u ON c.author=u.id ORDER BY c.date ASC;', (errorC, resultC) => {
+						req.database.query('SELECT c.id as id, c.content as content, DATE_FORMAT(c.date, "%D %b") as date, u.nick as author_nick, u.name as author_name, u.firstname as author_firstname, u.id as author_id, c.postid as postid, u.picture as author_avatar FROM AQHcomments AS c JOIN core_user AS u ON c.author=u.id ORDER BY c.date ASC;', (errorC, resultC) => {
 							if (errorC) {
 								req.logger.error(errorC);
 								res.sendStatus(500);
@@ -227,7 +230,7 @@ loadEventsData = async function (req, res) {
 											id: c['id'],
 											content: xss(c['content']),
 											date: c['date'],
-											author: {id: xss(c['author_id']), name: xss(c['author']), avatar: xss(c['author_avatar'])},
+											author: {id: xss(c['author_id']), name: xss(c['author_name']),  firstname: xss(c['author_firstname']),  nick: xss(c['author_nick']), avatar: xss(c['author_avatar'])},
 											postid: c['postid']
 										});
 									}
@@ -235,7 +238,7 @@ loadEventsData = async function (req, res) {
 							}
 
 							// get all posts
-							req.database.query('SELECT p.id as id, p.content as content, p.validated as validated, DATE_FORMAT(p.date, "%W %D %b %Y") as date, u.nick as author, u.picture as author_avatar, u.id as author_id, p.eventid as eventid FROM AQHposts AS p JOIN core_user AS u ON p.author=u.id ORDER BY p.date DESC;', (errorQuery, resultQuery) => {
+							req.database.query('SELECT p.id as id, p.content as content, p.validated as validated, DATE_FORMAT(p.date, "%W %D %b %Y") as date, u.nick as author_nick, u.name as author_name, u.firstname as author_firstname, u.picture as author_avatar, u.id as author_id, p.eventid as eventid FROM AQHposts AS p JOIN core_user AS u ON p.author=u.id ORDER BY p.date DESC;', (errorQuery, resultQuery) => {
 								if (errorQuery) {
 									req.logger.error(errorQuery);
 									res.sendStatus(500);
@@ -247,7 +250,7 @@ loadEventsData = async function (req, res) {
 												id: r['id'],
 												content: xss(r['content'], whiteList),
 												date: r['date'],
-												author: {id: xss(r['author_id']), name: xss(r['author']), avatar: xss(r['author_avatar'])},
+												author: {id: xss(r['author_id']), name: xss(r['author_name']),  firstname: xss(r['author_firstname']),  nick: xss(r['author_nick']), avatar: xss(r['author_avatar'])},
 												eventid: r['eventid'],
 												validated: r['validated'],
 												comments: []
@@ -280,7 +283,7 @@ loadEventsData = async function (req, res) {
 			});
 		});
 	});
-}
+};
 
 
 
@@ -300,7 +303,6 @@ loadEventsData = async function (req, res) {
 	let data = await promise; // wait until the promise resolves (*)
 
 	data["user"]=user_data;
-	console.log(data);
 
 	// render the html page sent to the client from ejs file
 	req.engines['ejs'].renderFile('modules/aqh/body/home.ejs', data, (errorEjs, resultEjs) => {
@@ -312,11 +314,10 @@ loadEventsData = async function (req, res) {
 			res.send(resultEjs);
 		}
 	});
-
 };
 
 exports.getOne = function (req, res) {
-	req.database.query('SELECT p.id as id, p.content as content, p.date as date, u.nick as author FROM AQHposts AS p JOIN core_user AS u ON u.id = p.author WHERE p.id = ?;', [req.query.id], (error, result) => {
+	req.database.query('SELECT p.id as id, p.content as content, p.date as date, u.nick as author, p.eventid as eventid FROM AQHposts AS p JOIN core_user AS u ON u.id = p.author WHERE p.id = ?;', [req.query.id], (error, result) => {
 		if (error) {
 			req.logger.error(error);
 			res.sendStatus(500);
@@ -327,7 +328,8 @@ exports.getOne = function (req, res) {
 					id: result[0]['id'],
 					content: result[0]['content'],
 					date: result[0]['date'],
-					author: result[0]['author']
+					author: result[0]['author'],
+					eventid: result[0]['eventid']
 				});
 			//	console.log(res);
 			//	console.log(result[0]['date']);
@@ -336,7 +338,8 @@ exports.getOne = function (req, res) {
 					id: "-1",
 					content: "Le post n'a pas pu être trouvée",
 					date: "21/04/1998",
-					author: ""
+					author: "",
+					eventid: "-1"
 				});
 			}
 		}
@@ -407,7 +410,7 @@ exports.addPost = function (req, res) {
 exports.update = function (req, res) {
 	var xss = require("xss");
 	console.log("update");
-	req.database.query('UPDATE AQHposts SET content = ? WHERE id = ?;', [xss(req.body.content, whiteList), xss(req.body.id)], (error, result) => {
+	req.database.query('UPDATE AQHposts SET content = ?, validated=false WHERE id = ?;', [xss(req.body.content, whiteList), xss(req.body.id)], (error, result) => {
 		if (error) {
 			req.logger.error(error);
 		} else {
