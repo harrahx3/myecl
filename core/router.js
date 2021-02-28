@@ -1,7 +1,7 @@
 /* jshint esversion:6 */
 
 /*
-    Builds basic routes, calls specific routes externally
+	Builds basic routes, calls specific routes externally
 */
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
@@ -93,12 +93,12 @@ module.exports = (context, app) => {
 		});
 	});
 
-// sync icalendar
+	// sync icalendar
 	app.get(['/ical'], context.bouncer('visitor'), (req, res) => {
 		console.log(req);
 		console.log(req.database);
 
-		var	calendar = "BEGIN:VCALENDAR\n";
+		var calendar = "BEGIN:VCALENDAR\n";
 		calendar += "VERSION:2.0\n";
 		calendar += "PRODID:myecl\n";
 		calendar += "X-PUBLISHED-TTL:P1W\n";
@@ -111,21 +111,21 @@ module.exports = (context, app) => {
 				for (var i = 0; i < result.length; i++) {
 					console.log(result[i].title);
 					calendar += "BEGIN:VEVENT\n";
-					calendar += "UID:"+result[i].id+"\n";
-					calendar += "DTSTART:"+result[i].start+"\n";
+					calendar += "UID:" + result[i].id + "\n";
+					calendar += "DTSTART:" + result[i].start + "\n";
 					calendar += "SEQUENCE:0\n";
 					calendar += "TRANSP:OPAQUE\n";
-					calendar += "DTEND:"+result[i].end+"\n";
-					calendar += "SUMMARY:" + result[i].title +"\n";
+					calendar += "DTEND:" + result[i].end + "\n";
+					calendar += "SUMMARY:" + result[i].title + "\n";
 					calendar += "CLASS:PUBLIC\n";
-					calendar += "DESCRIPTION:" + result[i].description +"\, "+ result[i].location + "\n";
+					calendar += "DESCRIPTION:" + result[i].description + "\, " + result[i].location + "\n";
 					//calendar += "DTSTAMP:20201002T073024Z\n";
 					calendar += "END:VEVENT\n";
 				}
 				calendar += "END:VCALENDAR";
 				res.send(calendar);
 			}
-	//	req.body.id
+			//	req.body.id
 		})
 
 	});

@@ -1,0 +1,112 @@
+<% for (let i in event.posts) { %>
+
+    <li class="media" style="padding: 1em;">
+    <div class="media-left">
+      <a
+        href="javascript:relocate('internal', 'profile', 'profile/<%=event.posts[i].author.id%>');">
+        <% if (event.posts[i].author.picture !='0' ) { %>
+          <img class="media-object" width="64"
+            src="/uploads/<%= event.posts[i].author.picture%>" alt="Profile Picture" />
+          <%} else {%>
+            <img class="media-object" width="64" src="/misc/profile/picture"
+              alt="Profile Picture" />
+            <%}%>
+      </a>
+    </div>
+    <div class="media-body" style="padding: 1em; background-color : #EEEEEE;">
+      <h4 class="mt-0">
+        <tr>
+          <td>
+            <p style="font-weight: bold;">Post de <%-event.posts[i].author.nick%> (
+                <%console.log(event.posts[i])%>
+                <%console.log(event.posts[i].author.firstname)%>
+
+                <%-event.posts[i].author.firstname%>
+                  <%-event.posts[i].author.name%>) le <%-event.posts[i].date%>
+            </p>
+          </td>
+          <%# admin can delete and edit post %>
+            <% if (event.admin) { %>
+              <td><button class='btn btn-primary edit'
+                  id="<%=event.posts[i].id%>">Editer</button></td>
+              <td><button class='btn btn-danger deletePost'
+                  id="<%=event.posts[i].id%>">Supprimer</button></td>
+              <% } %>
+                <% if (user.isAdminOrBde && !event.posts[i].validated) {%>
+                  <td><button class='btn btn-danger validatePost'
+                      id="<%=event.posts[i].id%>">Valider et publier</button></td>
+                  <div class="alert alert-warning alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"
+                      aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <p>Un modérateur doit valider ce post pour qu'il soit visible publiquement
+                    </p>
+                  </div>
+                  <% } %>
+        </tr>
+      </h4>
+      <p>
+        <%-event.posts[i].content%>
+      </p>
+
+      <%# print comment in bootstrap collapse object %>
+        <p><button class="btn btn-primary" type="button" data-toggle="collapse"
+            data-target="#collapse<%=event.posts[i].id%>" aria-expanded="false"
+            aria-controls="collapseExample">
+            <%= event.posts[i].comments.length==0 ? "Pas encore de commentaires" :
+              (event.posts[i].comments.length==1 ? "1 commentaire" :
+              event.posts[i].comments.length + " commentaires" )%>
+          </button></p>
+
+        <div class="collapse" id="collapse<%=event.posts[i].id%>">
+          <div class="">
+
+            <!--  <div class="col-md-offset-1 col-md-8"> -->
+            <ul class="list-unstyled media-list">
+              <% for (let j in event.posts[i].comments) { %>
+                <li class="media mt-3">
+                  <div class="media-left">
+                    <a
+                      href="javascript:relocate('internal', 'profile', 'profile/<%=event.posts[i].comments[j].author.id%>');">
+                      <% if (event.posts[i].comments[j].author.picture !='0' ) { %>
+                        <img class="media-object" width="64"
+                          src="/uploads/<%=event.posts[i].comments[j].author.picture%>"
+                          alt="Profile Picture" />
+                        <%} else {%>
+                          <img class="media-object" width="64" src="/uploads/avatar.png"
+                            alt="Profile Picture" />
+                          <%}%>
+                    </a>
+                  </div>
+                  <div class="media-body">
+                    <h5 class="mt-0">
+                      <%=event.posts[i].comments[j].author.nick%> (
+                        <%=event.posts[i].comments[j].author.firstname%>
+                          <%=event.posts[i].comments[j].author.name%>) le
+                            <%=event.posts[i].comments[j].date%>
+                              <% if (event.admin) { %>
+                                <button class='btn btn-danger deleteComment'
+                                  id="<%=event.posts[i].comments[j].id%>">Supprimer</button>
+                                <% } %>
+                    </h5>
+                    <p>
+                      <%= event.posts[i].comments[j].content %>
+                    </p>
+                  </div>
+                </li>
+                <% } %>
+
+                  <form>
+                    <textarea name="newcomment"
+                      id="newcomment<%=event.posts[i].id%>"></textarea>
+                    <button class="btn btn-primary addComment" id="<%=event.posts[i].id%>"
+                      type="submit">Commenter</button>
+                  </form>
+            </ul>
+          </div>
+        </div>
+
+    </div>
+  </li>
+
+
+  <% } %>

@@ -8,162 +8,220 @@
 		"phone": "",
 		"email": "victor.creuzet@ecl19.ec-lyon.fr"
 	},
-	"tables": [{
-		"name": "AQHposts",
-		"schema": {
-			"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
-			"eventid": "INT",
-			"content": "TEXT",
-			"date": "TEXT",
-			"author": "INT",
-			"validated": "tinyint(1)"
+	"tables": [
+		{
+			"name": "AQHposts",
+			"schema": {
+				"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
+				"eventid": "INT",
+				"content": "TEXT",
+				"date": "TEXT",
+				"author": "INT",
+				"validated": "tinyint(1)"
+			}
+		},
+		{
+			"name": "AQHcomments",
+			"schema": {
+				"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
+				"postid": "INT",
+				"content": "TEXT",
+				"date": "TEXT",
+				"author": "INT"
+			}
 		}
-	},
-	{
-		"name": "AQHcomments",
-		"schema": {
-			"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
-			"postid": "INT",
-			"content": "TEXT",
-			"date": "TEXT",
-			"author": "INT"
-		}
-	}],
+	],
 	"includes": {},
-	"rules": [{
-		"call": {
-			"type": "callback",
-			"location": "getAllEvents"
+	"rules": [
+		{
+			"call": {
+				"type": "callback",
+				"location": "getAllEvents"
+			},
+			"viewport": {
+				"type": "internal",
+				"location": "home/:id"
+			},
+			"includes": {
+				"scripts": [
+					"static/home.js",
+					"static/sw.js",
+					"static/ejs.min.js"
+				],
+				"styles": [
+					"static/home.css"
+				]
+			},
+			"authorisation": ""
 		},
-		"viewport": {
+		{
+			"call": {
+				"type": "callback",
+				"location": "getStoryJson"
+			},
+			"viewport": {
+				"type": "external",
+				"location": "/module/aqh/getStoryJson"
+			}
+		},
+		{
+			"call": {
+				"type": "callback",
+				"location": "getEvent"
+			},
+			"viewport": {
+				"type": "external",
+				"location": "/module/aqh/getEvent/:id"
+			}
+		},		{
+			"call": {
+				"type": "callback",
+				"location": "getEventTemplate"
+			},
+			"viewport": {
+				"type": "external",
+				"location": "/module/aqh/getEventTemplate"
+			}
+		},
+		{
+			"call": {
+				"type": "callback",
+				"location": "getOne"
+			},
+			"viewport": {
+				"type": "external",
+				"location": "/module/aqh/getOne"
+			}
+		},
+		{
+			"call": {
+				"type": "callback",
+				"location": "getAllEvents"
+			},
+			"viewport": {
+				"type": "external",
+				"location": "/module/aqh/getAllEvents"
+			}
+		},
+		{
+			"call": {
+				"type": "callback",
+				"location": "broadcast_notif"
+			},
+			"viewport": {
+				"type": "external",
+				"location": "/module/aqh/broadcast_notif",
+				"method": "POST",
+				"enctype": "urlencoded"
+			}
+		},
+		{
+			"call": {
+				"type": "callback",
+				"location": "addPost"
+			},
+			"viewport": {
+				"type": "external",
+				"location": "/module/aqh/addPost",
+				"method": "POST",
+				"enctype": "urlencoded"
+			},
+			"authorisation": ""
+		},
+		{
+			"call": {
+				"type": "callback",
+				"location": "validatePost"
+			},
+			"viewport": {
+				"type": "external",
+				"location": "/module/aqh/validatePost",
+				"method": "POST",
+				"enctype": "urlencoded"
+			},
+			"authorisation": {
+				"groups": [
+					{
+						"name": "admin"
+					},
+					{
+						"name": "bde"
+					}
+				]
+			}
+		},
+		{
+			"call": {
+				"type": "callback",
+				"location": "subscribe"
+			},
+			"viewport": {
+				"type": "external",
+				"location": "/module/aqh/subscribe",
+				"method": "POST",
+				"enctype": "urlencoded"
+			},
+			"authorisation": ""
+		},
+		{
+			"call": {
+				"type": "callback",
+				"location": "addComment"
+			},
+			"viewport": {
+				"type": "external",
+				"location": "/module/aqh/addComment",
+				"method": "POST",
+				"enctype": "urlencoded"
+			},
+			"authorisation": ""
+		},
+		{
+			"call": {
+				"type": "callback",
+				"location": "update"
+			},
+			"viewport": {
+				"type": "external",
+				"location": "/module/aqh/update",
+				"method": "POST",
+				"enctype": "urlencoded"
+			},
+			"authorisation": ""
+		},
+		{
+			"call": {
+				"type": "callback",
+				"location": "deletePost"
+			},
+			"viewport": {
+				"type": "external",
+				"location": "/module/aqh/deletePost",
+				"method": "POST",
+				"enctype": "urlencoded"
+			},
+			"authorisation": ""
+		},
+		{
+			"call": {
+				"type": "callback",
+				"location": "deleteComment"
+			},
+			"viewport": {
+				"type": "external",
+				"location": "/module/aqh/deleteComment",
+				"method": "POST",
+				"enctype": "urlencoded"
+			},
+			"authorisation": ""
+		}
+	],
+	"menu": [
+		{
+			"name": "AQH",
 			"type": "internal",
-			"location": "home/:id"
-		},
-		"includes": {
-			"scripts": ["static/home.js", "static/sw.js"],
-			"styles": ["static/home.css"]
-		},
-		"authorisation": ""
-	}, {
-		"call": {
-			"type": "callback",
-			"location": "getOne"
-		},
-		"viewport": {
-			"type": "external",
-			"location": "/module/aqh/getOne"
+			"anchor": "home/-1",
+			"authorisation": ""
 		}
-	}, {
-		"call": {
-			"type": "callback",
-			"location": "getAllEvents"
-		},
-		"viewport": {
-			"type": "external",
-			"location": "/module/aqh/getAllEvents"
-		}
-	},
-	{
-		"call": {
-			"type": "callback",
-			"location": "broadcast_notif"
-		},
-		"viewport": {
-			"type": "external",
-			"location": "/module/aqh/broadcast_notif",
-			"method": "POST",
-			"enctype": "urlencoded"
-		}
-	}, {
-		"call": {
-			"type": "callback",
-			"location": "addPost"
-		},
-		"viewport": {
-			"type": "external",
-			"location": "/module/aqh/addPost",
-			"method": "POST",
-			"enctype": "urlencoded"
-		},
-		"authorisation": ""
-	}, {
-		"call": {
-			"type": "callback",
-			"location": "validatePost"
-		},
-		"viewport": {
-			"type": "external",
-			"location": "/module/aqh/validatePost",
-			"method": "POST" ,
-			"enctype": "urlencoded"
-		},
-		"authorisation": {"groups": [{"name":"admin"}, {"name":"bde"}]}
-	}, {
-		"call": {
-			"type": "callback",
-			"location": "subscribe"
-		},
-		"viewport": {
-			"type": "external",
-			"location": "/module/aqh/subscribe",
-			"method": "POST",
-			"enctype": "urlencoded"
-		},
-		"authorisation": ""
-	},
-	{
-		"call": {
-			"type": "callback",
-			"location": "addComment"
-		},
-		"viewport": {
-			"type": "external",
-			"location": "/module/aqh/addComment",
-			"method": "POST",
-			"enctype": "urlencoded"
-		},
-		"authorisation": ""
-	},{
-		"call": {
-			"type": "callback",
-			"location": "update"
-		},
-		"viewport": {
-			"type": "external",
-			"location": "/module/aqh/update",
-			"method": "POST",
-			"enctype": "urlencoded"
-		},
-		"authorisation": ""
-	}, {
-		"call": {
-			"type": "callback",
-			"location": "deletePost"
-		},
-		"viewport": {
-			"type": "external",
-			"location": "/module/aqh/deletePost",
-			"method": "POST",
-			"enctype": "urlencoded"
-		},
-		"authorisation": ""
-	},{
-		"call": {
-			"type": "callback",
-			"location": "deleteComment"
-		},
-		"viewport": {
-			"type": "external",
-			"location": "/module/aqh/deleteComment",
-			"method": "POST",
-			"enctype": "urlencoded"
-		},
-		"authorisation": ""
-	}],
-	"menu": [{
-		"name": "AQH",
-		"type": "internal",
-		"anchor": "home/-1",
-		"authorisation": ""
-	}]
+	]
 }

@@ -1,16 +1,32 @@
+console.log("sw 1");
+
 self.addEventListener('push', event => {
-  let data = {"title": "default data"};
+  let data = { "title": "default data" };
   console.log("webPushnotif serice worker");
   if (event.data) {
     data = event.data.json();
   }
 
-//d
-   self.registration.showNotification(data.title, {
-     body: 'Yay it works!',
-     vibrate: [300,200,400]
-   });
- });
+  //d
+  self.registration.showNotification(data.title, {
+    body: 'Yay it works!',
+    vibrate: [300, 200, 400]
+  });
+});
+console.log("sw 2");
+
+self.addEventListener("fetch", function (event) {
+  console.log("mysw event fetch");
+  event.respondWith(
+    fetch(event.request).catch(funcipiîtion () {
+      return caches.match(event.request)
+    })
+  )
+});
+
+console.log("sw 3");
+console.log("sw 34");
+//test
 /*
 var socket = io.connect('https://192.168.1.203:433');
 

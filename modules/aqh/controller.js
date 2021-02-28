@@ -1,12 +1,14 @@
 const xss = require("xss"); // Protect against Cross-site scripting
 const webPush = require('web-push'); // Send Push notifications
+const { promises } = require("fs");
+const { resolve } = require("path");
 //subscriptions = [];
 const publicVapidKey = "BH3iIFAa05KHsYCDND5vXpa_MqRALURmWGpRX3dg5lBaxS6WQXEzJdhda3_dNAoKR3OD8txdiM2Op9mv-71eXPs";
 const privateVapidKey = "RXWqNvNVXov5HWdrxlM-dLG9TyBkYsStahQhiWLrrr0";
 webPush.setVapidDetails('mailto:hyacinthemen@gmail.com', publicVapidKey, privateVapidKey);
 
 console.log("\n xss.whiteList: \n");
-console.log(xss.whiteList);
+//console.log(xss.whiteList);
 //xss.whiteList.tab += "class";
 whiteList = xss.whiteList;
 whiteList.table.push("class");
@@ -17,8 +19,8 @@ whiteList.img.push("data-filename");
 whiteList.iframe = ["class", "src", "width", "height", "frameborder"];
 
 console.log("\nmodif\n");
-console.log(whiteList);
-//xss.whiteList.img =  [];
+//console.log(whiteList);
+//xss.whiteList.img =  [];l
 //xss.whiteList.video = [];
 
 /*var h = '<img src="/myimg/img.png" alt="abc"><p>gras</p><script>alert("xss");</script>';
@@ -28,7 +30,7 @@ console.log(h);*/
 
 
 
-exports.subscribe = function(req, res){
+exports.subscribe = function (req, res) {
 	console.log("add sub");
 	req.database.query('SELECT * FROM pushSubscriptions WHERE sub=?;', [req.body.content], (error, result) => {
 		if (error) {
@@ -47,7 +49,7 @@ exports.subscribe = function(req, res){
 	});
 };
 
-exports.broadcast_notif = function(req, res){
+exports.broadcast_notif = function (req, res) {
 	console.log("broadcast_notif");
 	req.database.query('SELECT * FROM pushSubscriptions;', [], (error, result) => {
 		console.log(result.length);
@@ -67,7 +69,7 @@ exports.broadcast_notif = function(req, res){
 	});
 };
 
- function broadcastPushotif(req, res, msg){
+function broadcastPushotif(req, res, msg) {
 	console.log("broadcastPushotif");
 	req.database.query('SELECT * FROM pushSubscriptions;', [], (error, result) => {
 		console.log(result.length);
@@ -82,7 +84,7 @@ exports.broadcast_notif = function(req, res){
 				webPush.sendNotification(JSON.parse(result[i].sub), payload)
 					.catch(err => console.error(err));
 			}
-		//	res.sendStatus(200);
+			//	res.sendStatus(200);
 		}
 	});
 };
@@ -94,20 +96,118 @@ exports.addComment = function (req, res) {
 		if (error) {
 			req.logger.error(error);
 		} else {
-			broadcastPushotif(req, res, req.user.id+"a commenté un post sur AQH");
+			broadcastPushotif(req, res, req.user.id + "a commenté un post sur AQH");
 			res.sendStatus(200);
 		}
 	});
 }
 
+getCommentsForPost = async function (req, res, post) {
+	return new Promise((resolve, reject) => {
+		//get all the comments
+		var comments = [];
+		req.database.query('SELECT c.id as id, c.content as content, DATE_FORMAT(c.date, "%D %b") as date, u.nick as author_nick, u.name as author_name, u.firstname as author_firstname, u.id as author_id, c.postid as postid, u.picture as author_avatar FROM AQHcomments AS c JOIN core_user AS u ON c.author=u.id WHERE c.postid=? ORDER BY c.date ASC;', [post.id], (errorC, resultC) => {
+			if (errorC) {
+				req.logger.error(errorC);
+				reject(errorC);
+				//res.sendStatus(500);
+			} else {
+				if (resultC.length) {
+					for (c of resultC) {
+						comments.push({
+							id: c['id'],
+							content: xss(c['content']),
+							date: c['date'],
+							author: { id: xss(c['author_id']), name: xss(c['author_name']), firstname: xss(c['author_firstname']), nick: xss(c['author_nick']), picture: xss(c['author_avatar']) },
+							postid: c['postid']
+						});
+					}
+				}
+				console.log(comments);
+				post.comments = comments;
+				resolve();
+				//resolve(comments);
+			}
+		});
+	});
+};
+
+exports.getStoryJson = async function (req, res) {
+	req.database.query('SELECT t.id as id, t.content as content, t.date as date, t.organisationid as author, t.title as title, t.id_user as miduser, g.name AS organisateur FROM (SELECT e.id as id, e.description as content, e.start as date, e.organisationid as organisationid, e.title as title, m.id_user as id_user FROM BDECalendar AS e JOIN core_membership AS m ON e.organisationid=m.id_group) AS t JOIN core_group AS g ON t.organisationid=g.id ORDER BY date DESC;', (error, result) => {
+		if (error) {
+			console.error(error);
+			res.sendStatus(500);
+		} else {
+			//console.log(result);
+			resulti = [];
+			result.forEach(resi => {
+				resulti.push(resi);
+			});
+			//console.log(resulti);
+			//setInterval(() => {
+			res.json(resulti);
+			//}, 2 * 1000);
+		}
+	});
+};
+
+exports.getEvent = async function (req, res) {
+	// get liste de posts
+	req.database.query('SELECT p.author as author_id, p.id as id, p.content as content, p.date as date, u.nick as author, p.eventid as eventid FROM AQHposts AS p JOIN core_user AS u ON p.author=u.id HAVING p.eventid=? ORDER BY p.date DESC;', [req.params.id], (error, result) => {
+		if (error) {
+			console.error(error);
+			res.sendStatus(500);
+		} else {
+			//console.log(result);
+			var posts = [];
+			var promises = [];
+
+			result.forEach(async function (post) {
+				promises.push(getCommentsForPost(req, res, post));
+				promises.push(new Promise((resolve, reject) => {
+					posts.push(post);
+					//let myvar = getCommentsForPost(req, res, post.id);
+					//post.comments = await myvar;
+					req.services.user.describe(post.author_id, 'id', (results) => {
+						if (result) {
+							//console.log('describe user');
+							//console.log(JSON.stringify(results));
+							post.author = results;
+							resolve();
+						} else {
+							reject();
+						}
+					});
+				}));
+			});
+
+			//setInterval(() => {
+			Promise.all(promises)
+				.then(() => {
+					console.log('resulti');
+					console.log(posts);
+					res.json(posts);
+				})
+				.catch(() => {
+					console.error('getEvent: error in promise describe user');
+				});
+			//}, 5 * 1000);
+		}
+	});
+};
+
+exports.getEventTemplate = async function (req, res) {
+	console.log(__dirname);
+	res.sendFile("static/event_page.ejs", { root: __dirname });
+};
 
 // Pour avoir les données (nottament les assos) de l'utilisateur connecté
 loadUserData = async function (req, res) {
 	return new Promise((resolve, reject) => {
 
-	//	var updated = false;
+		//	var updated = false;
 
-		var	id = req.user.id;
+		var id = req.user.id;
 		console.log(id);
 
 		req.database.query("SELECT id, login, name, firstname, nick, DATE_FORMAT(birth, '%d/%m/%Y') AS birth, promo, floor, email, picture, online, DATE_FORMAT(last_seen, '%d/%m/%Y') AS last_seen_date, DATE_FORMAT(last_seen, '%H:%i') AS last_seen_hour FROM core_user WHERE id = ?", [id], function (error, result) {
@@ -118,7 +218,7 @@ loadUserData = async function (req, res) {
 				if (result.length) {
 					var data = new Object();
 					data.found = true;
-				//	data.updated = updated;
+					//	data.updated = updated;
 					data.isCurentUser = id == req.user.id;
 					data.id = id;
 					for (let entry in result[0])
@@ -163,11 +263,11 @@ loadUserData = async function (req, res) {
 
 loadEventsData = async function (req, res) {
 	return new Promise((resolve, reject) => {
-			var shownPostId = req.params.id;
+		var shownPostId = req.params.id;
 		req.database.query("SET lc_time_names = 'fr_FR';", (errorl, resultl) => { // Pour tenter de formater les dates en francais
 
-		//get all events
-	//	req.database.query('SELECT e.id as id, e.description as content, e.start as date, e.organisationid as author, e.title as title FROM BDECalendar AS e ORDER BY e.start DESC;', (error, result) => {
+			//get all events
+			//	req.database.query('SELECT e.id as id, e.description as content, e.start as date, e.organisationid as author, e.title as title FROM BDECalendar AS e ORDER BY e.start DESC;', (error, result) => {
 			req.database.query('SELECT t.id as id, t.content as content, t.isVPCom as isVPCom, t.location as location, DATE_FORMAT(t.date, "%W %D %b %Y") as date, DATE_FORMAT(t.start, "%W %D %b %Y") as start, DATE_FORMAT(t.end, "%W %D %b %Y") as end, t.organisationid as author, t.title as title, t.id_user as miduser, g.name AS organisateur FROM (SELECT e.id as id, e.description as content, e.start as date, e.start as start, e.end as end, e.organisationid as organisationid, e.title as title, e.location as location, m.id_user as id_user, m.isVPCom as isVPCom FROM BDECalendar AS e JOIN core_membership AS m ON e.organisationid=m.id_group) AS t JOIN core_group AS g ON t.organisationid=g.id ORDER BY date DESC;', (error, result) => {
 
 				if (error) {
@@ -184,7 +284,7 @@ loadEventsData = async function (req, res) {
 					if (result.length) {
 						for (let i in result) {
 							var admin = (result[i]['miduser'] == req.user.id && result[i]['isVPCom']); 	// is the current user an admin for the current event
-							var event={
+							var event = {
 								id: result[i]['id'],
 								date: result[i]['date'],
 								title: xss(result[i]['title']),
@@ -199,12 +299,12 @@ loadEventsData = async function (req, res) {
 								posts: []
 							};
 
-							var add=true;
+							var add = true;
 							for (var j in data.events) {
-								 if (data.events[j].id==event.id) {
-									add=false;
+								if (data.events[j].id == event.id) {
+									add = false;
 									if (!data.events[j].admin && admin) {
-										data.events[j].admin=true;
+										data.events[j].admin = true;
 									}
 								}
 							}
@@ -218,7 +318,8 @@ loadEventsData = async function (req, res) {
 
 						//get all the comments
 						var comments = [];
-req.database.query('SELECT c.id as id, c.content as content, DATE_FORMAT(c.date, "%D %b") as date, u.nick as author_nick, u.name as author_name, u.firstname as author_firstname, u.id as author_id, c.postid as postid, u.picture as author_avatar FROM AQHcomments AS c JOIN core_user AS u ON c.author=u.id ORDER BY c.date ASC;', (errorC, resultC) => {							if (errorC) {
+						req.database.query('SELECT c.id as id, c.content as content, DATE_FORMAT(c.date, "%D %b") as date, u.nick as author_nick, u.name as author_name, u.firstname as author_firstname, u.id as author_id, c.postid as postid, u.picture as author_avatar FROM AQHcomments AS c JOIN core_user AS u ON c.author=u.id ORDER BY c.date ASC;', (errorC, resultC) => {
+							if (errorC) {
 								req.logger.error(errorC);
 								res.sendStatus(500);
 							} else {
@@ -228,7 +329,7 @@ req.database.query('SELECT c.id as id, c.content as content, DATE_FORMAT(c.date,
 											id: c['id'],
 											content: xss(c['content']),
 											date: c['date'],
-											author: {id: xss(c['author_id']), name: xss(c['author_name']),  firstname: xss(c['author_firstname']),  nick: xss(c['author_nick']), avatar: xss(c['author_avatar'])},
+											author: { id: xss(c['author_id']), name: xss(c['author_name']), firstname: xss(c['author_firstname']), nick: xss(c['author_nick']), avatar: xss(c['author_avatar']) },
 											postid: c['postid']
 										});
 									}
@@ -236,43 +337,44 @@ req.database.query('SELECT c.id as id, c.content as content, DATE_FORMAT(c.date,
 							}
 
 							// get all posts
-	req.database.query('SELECT p.id as id, p.content as content, p.validated as validated, DATE_FORMAT(p.date, "%W %D %b %Y") as date, u.nick as author_nick, u.name as author_name, u.firstname as author_firstname, u.picture as author_avatar, u.id as author_id, p.eventid as eventid FROM AQHposts AS p JOIN core_user AS u ON p.author=u.id ORDER BY p.date DESC;', (errorQuery, resultQuery) => {								if (errorQuery) {
+							req.database.query('SELECT p.id as id, p.content as content, p.validated as validated, DATE_FORMAT(p.date, "%W %D %b %Y") as date, u.nick as author_nick, u.name as author_name, u.firstname as author_firstname, u.picture as author_avatar, u.id as author_id, p.eventid as eventid FROM AQHposts AS p JOIN core_user AS u ON p.author=u.id ORDER BY p.date DESC;', (errorQuery, resultQuery) => {
+								if (errorQuery) {
 									req.logger.error(errorQuery);
 									res.sendStatus(500);
 								} else {
 									if (resultQuery.length) {
 										var posts = [];
 										for (r of resultQuery) {
-											var post={
+											var post = {
 												id: r['id'],
 												content: xss(r['content'], whiteList),
 												date: r['date'],
-		author: {id: xss(r['author_id']), name: xss(r['author_name']),  firstname: xss(r['author_firstname']),  nick: xss(r['author_nick']), avatar: xss(r['author_avatar'])},												eventid: r['eventid'],
+												author: { id: xss(r['author_id']), name: xss(r['author_name']), firstname: xss(r['author_firstname']), nick: xss(r['author_nick']), avatar: xss(r['author_avatar']) }, eventid: r['eventid'],
 												validated: r['validated'],
 												comments: []
 											};
 
 											// associate comments to the post
 											for (var i in comments) {
-												if (comments[i].postid==post.id) {
+												if (comments[i].postid == post.id) {
 													post.comments.push(comments[i]);
 												}
 											}
 
-												// associate the post to the event
-												for (var i in data.events) {
-													if (data.events[i].id == r['eventid']) {
-														data.events[i].posts.push(post);
-														break;
-													}
+											// associate the post to the event
+											for (var i in data.events) {
+												if (data.events[i].id == r['eventid']) {
+													data.events[i].posts.push(post);
+													break;
 												}
-											//	if (data.events[data.events.length - r['eventid']])
-												//	data.events[data.events.length - r['eventid']].posts.push(post);
 											}
+											//	if (data.events[data.events.length - r['eventid']])
+											//	data.events[data.events.length - r['eventid']].posts.push(post);
 										}
 									}
-										resolve(data);
-								});
+								}
+								resolve(data);
+							});
 						});
 					}
 				}
@@ -283,8 +385,8 @@ req.database.query('SELECT c.id as id, c.content as content, DATE_FORMAT(c.date,
 
 
 
- exports.getAllEvents = async function (req, res) {
-	 // interroge la base de données pour créer un grand objet data qui contient les détails des événements et envoie un fichier html généré avec le template home.ejs
+exports.getAllEvents = async function (req, res) {
+	// interroge la base de données pour créer un grand objet data qui contient les détails des événements et envoie un fichier html généré avec le template home.ejs
 	console.log("getAllEvents begin");
 
 	let promise_user_data = loadUserData(req, res);
@@ -292,14 +394,14 @@ req.database.query('SELECT c.id as id, c.content as content, DATE_FORMAT(c.date,
 
 	user_data.isAdminOrBde = false; // Les groupes admin et bde ont des droits spécifiques (admins de tous les événements et validation des posts)
 	for (var i = 0; i < user_data.assos.length; i++)
-		user_data.isAdminOrBde = user_data.isAdminOrBde || user_data.assos[i].name=='admin' || user_data.assos[i].name=='bde';
+		user_data.isAdminOrBde = user_data.isAdminOrBde || user_data.assos[i].name == 'admin' || user_data.assos[i].name == 'bde';
 
 	// Il faut absolument utiliser les promesses sinon le code continue et 'data' est vide au moment de générer le ejs
 	let promise = loadEventsData(req, res); // grande fonction lente avec plusieurs appels à la base de données
 	let data = await promise; // wait until the promise resolves (*)
 
-	data["user"]=user_data;
-	console.log(data);
+	data["user"] = user_data;
+	//console.log(data);
 
 	// render the html page sent to the client from ejs file
 	req.engines['ejs'].renderFile('modules/aqh/body/home.ejs', data, (errorEjs, resultEjs) => {
@@ -315,12 +417,13 @@ req.database.query('SELECT c.id as id, c.content as content, DATE_FORMAT(c.date,
 };
 
 exports.getOne = function (req, res) {
-req.database.query('SELECT p.id as id, p.content as content, p.date as date, u.nick as author, p.eventid as eventid FROM AQHposts AS p JOIN core_user AS u ON u.id = p.author WHERE p.id = ?;', [req.query.id], (error, result) => {		if (error) {
+	req.database.query('SELECT p.id as id, p.content as content, p.date as date, u.nick as author, p.eventid as eventid FROM AQHposts AS p JOIN core_user AS u ON u.id = p.author WHERE p.id = ?;', [req.query.id], (error, result) => {
+		if (error) {
 			req.logger.error(error);
 			res.sendStatus(500);
 		} else {
 			if (result.length > 0) {
-			//	console.log(result);
+				//	console.log(result);
 				res.json({
 					id: result[0]['id'],
 					content: result[0]['content'],
@@ -328,8 +431,8 @@ req.database.query('SELECT p.id as id, p.content as content, p.date as date, u.n
 					author: result[0]['author'],
 					eventid: result[0]['eventid']
 				});
-			//	console.log(res);
-			//	console.log(result[0]['date']);
+				//	console.log(res);
+				//	console.log(result[0]['date']);
 			} else {
 				res.json({
 					id: "-1",
@@ -407,7 +510,8 @@ exports.addPost = function (req, res) {
 exports.update = function (req, res) {
 	var xss = require("xss");
 	console.log("update");
-	req.database.query('UPDATE AQHposts SET content = ?, validated=false WHERE id = ?;', [xss(req.body.content, whiteList), xss(req.body.id)], (error, result) => {		if (error) {
+	req.database.query('UPDATE AQHposts SET content = ?, validated=false WHERE id = ?;', [xss(req.body.content, whiteList), xss(req.body.id)], (error, result) => {
+		if (error) {
 			req.logger.error(error);
 		} else {
 			res.sendStatus(200);
@@ -475,18 +579,18 @@ exports.broadcast_notif = function (req, res) {
 	console.log(subscriptions);
 
 	const payload = JSON.stringify({
-    title: 'BROADCAST Push notifications with Service Workers !!!',
+	title: 'BROADCAST Push notifications with Service Workers !!!',
   });
 
   for (var i = 0; i < subscriptions.length; i++) {
-    webPush.sendNotification(JSON.parse(subscriptions[i]), payload)
-      .catch(error => console.error(error));
+	webPush.sendNotification(JSON.parse(subscriptions[i]), payload)
+	  .catch(error => console.error(error));
   }
 
 
 };
 */
-exports.validatePost = function(req, res){
+exports.validatePost = function (req, res) {
 	console.log("validatePost");
 	req.database.query('UPDATE AQHposts SET validated=true WHERE id = ?;', [req.body.id], (error, result) => {
 		if (error) {
@@ -688,43 +792,43 @@ exports.validatePost = function(req, res){
 
 
 
-	/*getPosts = function (i) {
-		console.log("pregetPOsts");
-		req.database.query("SELECT p.id as id, p.content as content, p.date as date, p.author as author FROM AQHposts AS p JOIN AQHevents AS e ON p.eventid = e.id WHERE e.id=? ORDER BY p.date DESC;",[i] , function (errorQuery, result) {
-	console.log("postquery");
-			if (errorQuery) {
-				console.log("errorgetPosts");
-				req.logger.warning(errorQuery);
-				res.sendStatus(500);
-			} else {
+/*getPosts = function (i) {
+	console.log("pregetPOsts");
+	req.database.query("SELECT p.id as id, p.content as content, p.date as date, p.author as author FROM AQHposts AS p JOIN AQHevents AS e ON p.eventid = e.id WHERE e.id=? ORDER BY p.date DESC;",[i] , function (errorQuery, result) {
+console.log("postquery");
+		if (errorQuery) {
+			console.log("errorgetPosts");
+			req.logger.warning(errorQuery);
+			res.sendStatus(500);
+		} else {
 
-				var data = {
-					posts: []
-				};
-				console.log("result");
-				if (result.length > 0) {
+			var data = {
+				posts: []
+			};
+			console.log("result");
+			if (result.length > 0) {
 
-					for (let i in result) {
-						data.posts.push({
-							id: result[i]['id'],
-							date: result[i]['date'],
-							content: result[i]['content'],
-							author: result[i]['author']
+				for (let i in result) {
+					data.posts.push({
+						id: result[i]['id'],
+						date: result[i]['date'],
+						content: result[i]['content'],
+						author: result[i]['author']
 
-						});
-					}
+					});
 				}
-				console.log(data);
-					return data;*/
-			/*	req.engines['ejs'].renderFile('modules/aqh/body/post.ejs', data, (errorEjs, resultEjs) => {
-					if (errorEjs) {
-						req.logger.error(errorEjs);
-						res.sendStatus(500);
-					} else {
-						console.log(resultEjs);
-						res.send(resultEjs);
-					}
-				});*/
+			}
+			console.log(data);
+				return data;*/
+/*	req.engines['ejs'].renderFile('modules/aqh/body/post.ejs', data, (errorEjs, resultEjs) => {
+		if (errorEjs) {
+			req.logger.error(errorEjs);
+			res.sendStatus(500);
+		} else {
+			console.log(resultEjs);
+			res.send(resultEjs);
+		}
+	});*/
 		//	}
 //		});
 	//};

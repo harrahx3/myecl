@@ -1,210 +1,145 @@
 <%#Code ejs qui génére coté serveur un code html à partir d'un objet data qui contient les events %>
 
 
-<!--include libraries(jQuery, bootstrap) -->
-<!--<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <!--include libraries(jQuery, bootstrap) -->
+  <!--<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" />
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
 -->
-<!-- include summernote css/js-->
-<!--<link href="summernote.css" rel="stylesheet">
+  <!-- include summernote css/js-->
+  <!--<link href="summernote.css" rel="stylesheet">
 <script src="summernote.js"></script>-->
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.js" charset="utf-8"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.css">
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.js" charset="utf-8"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.css">
+
+  <div id="addtest"></div>
+
+  <% var isShownPost=false; for (var i=0; i < events.length; i++) { isShownPost=events[i].shownPost || isShownPost; } %>
+
+    <div id="top_notif_area">
+    </div>
 
 
-<% var isShownPost = false
-  for (var i = 0; i < events.length; i++) {
-    isShownPost = events[i].shownPost || isShownPost;
-  }
-%>
+    <!-- tab list -->
+    <ul class="nav nav-pills nav-pills-custom-minimal custom-minimal-bottom" role="tablist">
 
-<div id="top_notif_area">
-</div>
+      <li <% if(!isShownPost) {%> class='active' <%} %> >
+          <a href="#presentation" role="tab" data-toggle="tab">Présentation</a>
+      </li>
 
+      <% for (event of events) {%>
 
-<!-- tab list -->
-<ul class="nav nav-pills nav-pills-custom-minimal custom-minimal-bottom" role="tablist">
+        <li <% if(event.shownPost) {%> class='active' <%} %> >
+            <a href="#event<%= event.id %>" role="tab" data-toggle="tab">
+              <%=event.title%> <span class="badge">
+                  <%=event.organisateur%>
+                </span>
+            </a>
+        </li>
 
-  <li <% if(!isShownPost)  {%> class='active' <%} %> >
-		<a href="#presentation" role="tab" data-toggle="tab">Présentation</a>
-	</li>
+        <% } %>
 
-  <% for (event of events) {%>
+    </ul>
 
-  		<li <% if(event.shownPost)  {%> class='active' <%} %> >
-  		<a href="#event<%= event.id %>" role="tab" data-toggle="tab"><%=event.title%> <span class="badge"><%=event.organisateur%></span></a>
-  	</li>
+    <!-- tab content -->
+    <div class="tab-content">
 
-  <% } %>
+      <!-- first tab: presentation -->
+      <div id="presentation" <% if(!isShownPost) {%> class='tab-pane active in' <% }else{%> class='tab-pane fade' <%}%>>
+            <!--  active in"> -->
+            <!--  active in"> -->
 
-</ul>
+            <div class="jumbotron">
+              <h1 class="display-4">AQH</h1>
+              <p class="lead"> A quelle heure ?</p>
+              <hr class="my-4">
 
-<!-- tab content -->
-<div class="tab-content">
-
-  <!-- first tab: presentation -->
-  <div id="presentation" <% if(!isShownPost) {%> class='tab-pane active in' <% }else{%> class='tab-pane fade' <%}%>> <!--  active in"> --> <!--  active in"> -->
-
-    <div class="jumbotron">
-      <h1 class="display-4">AQH</h1>
-      <p class="lead"> A quelle heure ?</p>
-      <hr class="my-4">
-
-<!--<button type="button" class="btn btn-lg btn-danger" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Click to toggle popover</button>
+              <!--<button type="button" class="btn btn-lg btn-danger" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Click to toggle popover</button>
 <a tabindex="0" class="btn btn-lg btn-danger" role="button" data-toggle="popover" data-trigger="focus" id="example" title="Dismissible popover" data-content="And here's some amazing content. It's very engaging. Right?">Dismissible popover</a>
       -->
-      <p>Posts info associatif</p>
+              <p>Posts info associatif</p>
 
 
-    </div>
+            </div>
 
-  <!--  <button type="button" class="btn btn-lg btn-danger" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Click to toggle popover</button>
+            <!--  <button type="button" class="btn btn-lg btn-danger" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">Click to toggle popover</button>
 -->
-  </div>
+      </div>
 
-  <!-- tab for all events in BDECalendar -->
-  <% for (event of events) { %>
+      <!-- tab for all events in BDECalendar -->
+      <% for (event of events) { %>
 
-      <div id="event<%= event.id %>" <% if(event.shownPost) {%> class='tab-pane active in' <% }else{%> class='tab-pane fade' <%}%> >
-
-
-     <div class='col-md-6 col-md-offset-3'>
-        <p class='text-center'>
-          <span class='lead'> <%=event.title %></span><br>
-          <span><i> <%=event.content%> </i></span>
-        </p>
-         <p class='text-center'>
-           <span>Du  <%=event.start%> au <%=event.end%> </span><br>
-           <span>Organisateur : <%=event.organisateur%> &emsp;&ensp;Lieu : <%=event.location%> </span>
-         </p>
-       </div>
-
-      <% if (event.admin) { %>
-        <div class="col-md-offset-2 col-md-8">
-        	<form class="form-horizontal" method="post">
-        		<div class="form-group">
-        			<div class="col-md-12">
-                <div class="alert alert-warning alert-dismissible" role="alert">
-                  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                  <p>En cas de bug:</p>
-                  <p>Recharger le module si l'éditeur de texte ne s'affiche pas</p>
-                  <p>Ajouter une video:&lt;p&gt;&lt;iframe src='//www.youtube.com/lien' class='note-video-clip' width='640' height='360' frameborder='0'&gt;&lt;/iframe&gt;&lt;/p&gt;</p>
-                  <p>Ajouter un lien: &lt;a href="http://google.com" target="_blank"&gt;texte_à_afficher&lt;/a&gt;</p>
-                  <p>Ajouter une image: par copier/coller ou drag&drop de l'image (ou éventuellement avec une balise img si elle est hébérgée en ligne)</p>
-                </div>
-        				<div class="summernote" id="content<%=event.id%>"></div>
-        				<input type="hidden" name="curfcn rent" id="current" value="-1" />
-        			</div>
-        		</div>
-
-        		<div class="form-group">
-        			<div class="col-sm-4 col-sm-offset-4">
-        				<button class="btn btn-primary btn-block addPost" id="<%=event.id%>" type="submit">Ajouter</button>
-        			</div>
-        		</div>
-
-        	</form>
-        </div>
-      <% } %>
+        <div id="event<%= event.id %>" <% if(event.shownPost) {%> class='tab-pane active in' <% }else{%> class='tab-pane
+            fade' <%}%> >
 
 
-  		<div  class="col-md-offset-2 col-md-8" style="background-color: #FFFFFF;">
-
-          <!-- if there is no posts for this event -->
-          <% if (event.posts.length==0) { %>
-            <h3>Pas encore de posts pour cet événement</h3>
-          <% } %>
-
-
-          <!-- print all posts in bootstrap media object-->
-
-          <ul class="media-list">
-
-            <%  for (let i in event.posts) { %>
-
-            <li class="media" style="padding: 1em;">
-              <div class="media-left">
-                <a href="javascript:relocate('internal', 'profile', 'profile/<%=event.posts[i].author.id%>');">
-                  <% if (event.posts[i].author.avatar != '0') { %>
-                    <img class="media-object" width="64" src="/uploads/<%= event.posts[i].author.avatar%>" alt="Profile Picture" />
-                  <%} else {%>
-                    <img class="media-object" width="64" src="/misc/profile/avatar" alt="Profile Picture" />
-                  <%}%>
-                </a>
+              <div class='col-md-6 col-md-offset-3'>
+                <p class='text-center'>
+                  <span class='lead'>
+                    <%=event.title %>
+                  </span><br>
+                  <span><i>
+                      <%=event.content%>
+                    </i></span>
+                </p>
+                <p class='text-center'>
+                  <span>Du <%=event.start%> au <%=event.end%> </span><br>
+                  <span>Organisateur : <%=event.organisateur%> &emsp;&ensp;Lieu : <%=event.location%> </span>
+                </p>
               </div>
-              <div class="media-body" style="padding: 1em; background-color : #EEEEEE;">
-                <h4 class="mt-0">
-                  <tr>
-  <td><p style="font-weight: bold;">Post de <%-event.posts[i].author.nick%> (<%-event.posts[i].author.firstname%> <%-event.posts[i].author.name%>) le <%-event.posts[i].date%></p></td>
-                    <%# admin can delete and edit post %>
-                    <% if (event.admin) { %>
-                      <td><button class='btn btn-primary edit' id="<%=event.posts[i].id%>">Editer</button></td>
-                      <td><button class='btn btn-danger deletePost' id="<%=event.posts[i].id%>">Supprimer</button></td>
-                    <% } %>
-                    <% if (user.isAdminOrBde && !event.posts[i].validated) {%>
-                      <td><button class='btn btn-danger validatePost' id="<%=event.posts[i].id%>">Valider et publier</button></td>
-                      <div class="alert alert-warning alert-dismissible" role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <p>Un modérateur doit valider ce post pour qu'il soit visible publiquement</p>
+
+              <% if (event.admin) { %>
+                <div class="col-md-offset-2 col-md-8">
+                  <form class="form-horizontal" method="post">
+                    <div class="form-group">
+                      <div class="col-md-12">
+                        <div class="alert alert-warning alert-dismissible" role="alert">
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                              aria-hidden="true">&times;</span></button>
+                          <p>En cas de bug:</p>
+                          <p>Recharger le module si l'éditeur de texte ne s'affiche pas</p>
+                          <p>Ajouter une video:&lt;p&gt;&lt;iframe src='//www.youtube.com/lien' class='note-video-clip'
+                            width='640' height='360' frameborder='0'&gt;&lt;/iframe&gt;&lt;/p&gt;</p>
+                          <p>Ajouter un lien: &lt;a href="http://google.com"
+                            target="_blank"&gt;texte_à_afficher&lt;/a&gt;</p>
+                          <p>Ajouter une image: par copier/coller ou drag&drop de l'image (ou éventuellement avec une
+                            balise img si elle est hébérgée en ligne)</p>
+                        </div>
+                        <div class="summernote" id="content<%=event.id%>"></div>
+                        <input type="hidden" name="curfcn rent" id="current" value="-1" />
                       </div>
-                    <% } %>
-                  </tr>
-                </h4>
-                <p><%-event.posts[i].content%></p>
+                    </div>
 
-                <%# print comment in bootstrap collapse object %>
-                <p><button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapse<%=event.posts[i].id%>" aria-expanded="false" aria-controls="collapseExample">
-                   <%= event.posts[i].comments.length == 0 ? "Pas encore de commentaires" : (event.posts[i].comments.length == 1 ? "1 commentaire" : event.posts[i].comments.length + " commentaires")%>
-                </button></p>
+                    <div class="form-group">
+                      <div class="col-sm-4 col-sm-offset-4">
+                        <button class="btn btn-primary btn-block addPost" id="<%=event.id%>"
+                          type="submit">Ajouter</button>
+                      </div>
+                    </div>
 
-                <div class="collapse" id="collapse<%=event.posts[i].id%>">
-                  <div class="">
+                  </form>
+                </div>
+                <% } %>
 
-                <!--  <div class="col-md-offset-1 col-md-8"> -->
-                    <ul class="list-unstyled media-list">
-                      <% for (let j in event.posts[i].comments) { %>
-                        <li class="media mt-3">
-                          <div class="media-left">
-                            <a href="javascript:relocate('internal', 'profile', 'profile/<%=event.posts[i].comments[j].author.id%>');">
-                              <% if (event.posts[i].comments[j].author.avatar != '0') { %>
-                                <img class="media-object" width="64" src="/uploads/<%=event.posts[i].comments[j].author.avatar%>" alt="Profile Picture" />
-                              <%} else {%>
-                                <img class="media-object" width="64" src="/misc/profile/avatar" alt="Profile Picture" />
-                              <%}%>
-                             </a>
-                          </div>
-                          <div class="media-body">
-                            <h5 class="mt-0">
-                                  <%=event.posts[i].comments[j].author.nick%> (<%=event.posts[i].comments[j].author.firstname%> <%=event.posts[i].comments[j].author.name%>) le <%=event.posts[i].comments[j].date%>
-                              <% if (event.admin) { %>
-                                <button class='btn btn-danger deleteComment' id="<%=event.posts[i].comments[j].id%>">Supprimer</button>
-                              <% } %>
-                            </h5>
-                            <p><%= event.posts[i].comments[j].content %></p>
-                          </div>
-                        </li>
+
+                  <div class="col-md-offset-2 col-md-8" style="background-color: #FFFFFF;">
+
+                    <!-- if there is no posts for this event -->
+                    <% if (event.posts.length==0) { %>
+                      <h3>Pas encore de posts pour cet événement</h3>
                       <% } %>
 
-                      <form>
-                        <textarea name="newcomment" id="newcomment<%=event.posts[i].id%>"></textarea>
-                        <button class="btn btn-primary addComment" id="<%=event.posts[i].id%>" type="submit">Commenter</button>
-                      </form>
-                    </ul>
+                        <!-- print all posts in bootstrap media object-->
+
+                        <ul id="list_posts_<%=event.id%>" class="media-list">
+
+                          <div class="loader" id="loader_<%=event.id%>"></div>
+
+                        </ul>
+
                   </div>
-                </div>
+        </div>
 
-              </div>
-            </li>
+        <% } %>
 
-          <% } %>
-
-        </ul>
-
-
-      </div>
     </div>
-
-  <% } %>
-
-</div>

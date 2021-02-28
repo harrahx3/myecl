@@ -2,87 +2,237 @@
 // Code javascript executer coté client
 
 /*  <div class="form-group">
-    <label for="exampleFormControlSelect1">Example select</label>
-    <select class="form-control" id="exampleFormControlSelect1">
-      <option>1</option>
-      <option>2</option>
-      <option>3</option>
-      <option>4</option>
-      <option>5</option>
-    </select>
+	<label for="exampleFormControlSelect1">Example select</label>
+	<select class="form-control" id="exampleFormControlSelect1">
+	  <option>1</option>
+	  <option>2</option>
+	  <option>3</option>
+	  <option>4</option>
+	  <option>5</option>
+	</select>
   </div>
 */
 
 
+function get(url) {
+	// Return a new promise.
+	console.log('get url' + url);
+	return new Promise(function (resolve, reject) {
+		// Do the usual XHR stuff
+		var req = new XMLHttpRequest();
+		req.open('GET', url);
+
+		req.onload = function () {
+			// This is called even on 404 etc
+			// so check the status
+			if (req.status == 200) {
+				// Resolve the promise with the response text
+				console.log('resolve get url' + url + 'with ' + req.response);
+				resolve(req.response);
+			}
+			else {
+				// Otherwise reject with the status text
+				// which will hopefully be a meaningful error
+				reject(Error(req.statusText));
+			}
+		};
+
+		// Handle network errors
+		req.onerror = function () {
+			reject(Error("Network Error"));
+		};
+
+		// Make the request
+		req.send();
+	});
+}
+
+function getJSON(url) {
+	console.log('getJSON ' + url);
+	return get(url).then(JSON.parse);
+}
+
+function spawn(generatorFunc) {
+	function continuer(verb, arg) {
+		var result;
+		try {
+			result = generator[verb](arg);
+		} catch (err) {
+			return Promise.reject(err);
+		}
+		if (result.done) {
+			return result.value;
+		} else {
+			return Promise.resolve(result.value)
+				.then(onFulfilled, onRejected);
+		}
+	}
+	var generator = generatorFunc();
+	var onFulfilled = continuer.bind(continuer, "next");
+	var onRejected = continuer.bind(continuer, "throw");
+	return onFulfilled();
+}
+
+
+
+
+
 function urlBase64ToUint8Array(base64String) {
-      const padding = '='.repeat((4 - base64String.length % 4) % 4);
-      const base64 = (base64String + padding)
-        .replace(/-/g, '+')
-        .replace(/_/g, '/');
+	const padding = '='.repeat((4 - base64String.length % 4) % 4);
+	const base64 = (base64String + padding)
+		.replace(/-/g, '+')
+		.replace(/_/g, '/');
 
-      const rawData = window.atob(base64);
-      const outputArray = new Uint8Array(rawData.length);
+	const rawData = window.atob(base64);
+	const outputArray = new Uint8Array(rawData.length);
 
-      for (let i = 0; i < rawData.length; ++i) {
-        outputArray[i] = rawData.charCodeAt(i);
-      }
-      return outputArray;
-    }
-
-
-
-    async function triggerPushNotificationSubscription() {
-      if ('serviceWorker' in navigator) {
-        const register = await navigator.serviceWorker.register('/sw.js', {
-          scope: '/'
-        });
-        const publicVapidKey = 'BH3iIFAa05KHsYCDND5vXpa_MqRALURmWGpRX3dg5lBaxS6WQXEzJdhda3_dNAoKR3OD8txdiM2Op9mv-71eXPs';
-
-        const subscription = await register.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
-        });
-
-				$.post('/module/aqh/subscribe', {
-					content: JSON.stringify(subscription)
-				});
-
-				// broadcastPushNotification();
-
-        /*await fetch('module/aqh/subscribe', {
-          method: 'POST',
-          body: JSON.stringify(subscription),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });*/
-      } else {
-        console.error('Service workers are not supported in this browser');
-      }
-    }
+	for (let i = 0; i < rawData.length; ++i) {
+		outputArray[i] = rawData.charCodeAt(i);
+	}
+	return outputArray;
+}
 
 
-    async function broadcastPushNotification(msg) {
-      /*  await fetch('module/aqh/broadcast_notif', {
-          method: 'GET'
-        });*/
-				$.post('/module/aqh/broadcast_notif', {title: msg});
-    }
+
+async function triggerPushNotificationSubscription() {
+	if ('serviceWorker' in navigator) {
+		const register = await navigator.serviceWorker.register('/sw.js', {
+			scope: '/'
+		});
+		const publicVapidKey = 'BH3iIFAa05KHsYCDND5vXpa_MqRALURmWGpRX3dg5lBaxS6WQXEzJdhda3_dNAoKR3OD8txdiM2Op9mv-71eXPs';
+
+		const subscription = await register.pushManager.subscribe({
+			userVisibleOnly: true,
+			applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
+		});
+
+		$.post('/module/aqh/subscribe', {
+			content: JSON.stringify(subscription)
+		});
+
+		// broadcastPushNotification();
+
+		/*await fetch('module/aqh/subscribe', {
+		  method: 'POST',
+		  body: JSON.stringify(subscription),
+		  headers: {
+			'Content-Type': 'application/json',
+		  },
+		});*/
+	} else {
+		console.error('Service workers are not supported in this browser');
+	}
+}
 
 
-$(document).ready(function () {
-//	triggerPushNotificationSubscription();
-//	$(".summernote").summernote({});
+async function broadcastPushNotification(msg) {
+	/*  await fetch('module/aqh/broadcast_notif', {
+		method: 'GET'
+	  });*/
+	$.post('/module/aqh/broadcast_notif', { title: msg });
+}
+
+
+
+
+$(function () {
+	//	triggerPushNotificationSubscription();
+	//	$(".summernote").summernote({});
 	$('.summernote').summernote({
 		height: 150
 	});
-//	triggerPushNotificationSubscription();
-//	broadcastPushNotification();
+	//	triggerPushNotificationSubscription();
+	//	broadcastPushNotification();
 	//$('[data-toggle="popover"]').popover();
+	$.get('module/aqh/getEventTemplate', (res, err) => {
+		/*if (err != 'success') {
+			console.error('error getting module/aqh/getEventTemplate');
+			console.error(err);
+		} else {*/
+		console.log(res);
+		spawn(function* () { //generator
+			try {
+				console.log('exe generator');
+				// 'yield' effectively does an async wait,
+				// returning the result of the promise
+				let events = yield getJSON('module/aqh/getStoryJson');
+				$('#addtest').append(events);
+
+				// Map our array of chapter urls to
+				// an array of chapter json promises.
+				// This makes sure they all download in parallel.
+				let eventContentPromises = [];
+				events.forEach(event => {
+					eventContentPromises.push(getJSON('module/aqh/getEvent/' + event.id));
+				});
+				/*let chapterPromises = story.chapterUrls.map(getJSON);*/
+
+
+
+				for (let eventContentPromise of eventContentPromises) {
+					// Wait for each chapter to be ready, then add it to the page
+					let posts = yield eventContentPromise;
+
+					console.log('chapter : ' + posts);
+					posts.forEach(post => {
+						if (!post.comments) {
+							post.comments = [];
+						}
+					});
+					if (posts[0]) {
+						var html = ejs.render(res, { event: { id: posts[0].eventid, admin: true, posts: posts }, user: { isAdminOrBde: true } });
+						console.log('add html');
+						console.log(html);
+						console.log('to');
+						console.log('#list_posts_' + posts[0].eventid);
+						$('#list_posts_' + posts[0].eventid).html(html);
+					}
+
+					/*posts.forEach(chap => {
+						//$('#event' + chap.eventid).append(chap.content);
+						var template = `
+				<li class="media">
+					<div class="media-body">
+							<h4 class="mt-0">
+						<tr>
+							<td><p>Post de <%-chap.author%> le <%-chap.date%></p></td>
+	
+							<%# admin can delete and edit post %>
+						<% if (event.admin) { %>
+							<td><button class='btn btn-primary edit' id="<%=chap.id%>">Editer</button></td>
+							<td><button class='btn btn-danger delete' id="<%=chap.id%>">Supprimer</button></td>
+						<% } %>
+						</tr>
+							</h4>
+							<p><%-chap.content%></p>
+						</div>
+				</li>
+				`
+
+						//});
+						var html = ejs.render(res, { chap: chap, event: { admin: true } });
+						console.log('add html');
+						console.log(html);
+						console.log('to');
+						console.log('#list_posts_' + chap.eventid);
+						$('#list_posts_' + chap.eventid).append(html);
+					});*/
+				}
+				$('#addtest').append("All done");
+			}
+			catch (err) {
+				console.error('error generator: ' + err.message);
+				// try/catch just works, rejected promises are thrown here
+				$('#addtest').append("Argh, broken: " + err.message);
+			}
+			//document.querySelector('.spinner').style.display = 'none';
+		})
+		//}
+	});
 });
 
 $(document).on('click', '.deletePost', function () {
-//	broadcastPushNotification();
+	//	broadcastPushNotification();
 
 	var id = $(this).attr('id');
 	$.post('/module/aqh/deletePost', {
@@ -91,40 +241,40 @@ $(document).on('click', '.deletePost', function () {
 		$(".summernote").code('<p><br></p>');
 		$("#current").val(-1);
 		//loadNews();
-	/*	$.get('/module/aqh/getAllEvents', (result) => {
-			$("#main-content-wrapper").html(result);
-		});
-		*/
+		/*	$.get('/module/aqh/getAllEvents', (result) => {
+				$("#main-content-wrapper").html(result);
+			});
+			*/
 		relocate('internal', 'aqh', 'home/-1');
 	});
 });
 
 $(document).on('click', '.validatePost', function () {
-//	broadcastPushNotification();
+	//	broadcastPushNotification();
 
 	var id = $(this).attr('id');
 	$.post('/module/aqh/validatePost', {
 		id: id
 	}, (result) => {
 		//loadNews();
-	/*	$.get('/module/aqh/getAllEvents', (result) => {
-			$("#main-content-wrapper").html(result);
-		});
-		*/
+		/*	$.get('/module/aqh/getAllEvents', (result) => {
+				$("#main-content-wrapper").html(result);
+			});
+			*/
 		relocate('internal', 'aqh', 'home/-1');
 	});
 });
 
 $(document).on('click', '.deleteComment', function () {
-//	// broadcastPushNotification();
+	//	// broadcastPushNotification();
 	var id = $(this).attr('id');
 	$.post('/module/aqh/deleteComment', {
 		id: id
 	}, (result) => {
 		//loadNews();
-	/*	$.get('/module/aqh/getAllEvents', (result) => {
-			$("#main-content-wrapper").html(result);
-		});*/
+		/*	$.get('/module/aqh/getAllEvents', (result) => {
+				$("#main-content-wrapper").html(result);
+			});*/
 		relocate('internal', 'aqh', 'home/-1');
 	});
 });
@@ -136,15 +286,16 @@ $(document).on('click', '.edit', function () {
 		id: id
 	}, (result) => {
 		$("#current").val(id);
-    //$(".summernote").code(result.content);
-    var selector = "#content"+result.eventid;
-    $(selector).summernote('code', result.content);	});
+		//$(".summernote").code(result.content);
+		var selector = "#content" + result.eventid;
+		$(selector).summernote('code', result.content);
+	});
 });
 
 $(".addPost").click(function (e) {
 	//broadcastPushNotification();
 
-//$(document).on('click', '.add', function () {
+	//$(document).on('click', '.add', function () {
 
 	console.log("click add Post button");
 	e.preventDefault();
@@ -156,10 +307,10 @@ $(".addPost").click(function (e) {
 	var event_id = $(this).attr('id');
 	console.log(event_id);
 
-	var selector = "#content"+event_id;
+	var selector = "#content" + event_id;
 
-  //var content = $(selector).code();
-  var content = $(selector).summernote('code');
+	//var content = $(selector).code();
+	var content = $(selector).summernote('code');
 
 	console.log(content);
 
@@ -175,28 +326,28 @@ $(".addPost").click(function (e) {
 			eventid: event_id
 		});
 	}
-  //$(selector).code('<p><br></p>');
+	//$(selector).code('<p><br></p>');
 	$(selector).summernote('code', '<p><br></p>');
-//	loadNews();
-/*	$.get('/module/aqh/getAllEvents', (result) => {
-		$("#main-content-wrapper").html(result);
-	});*/
-  $("#top_notif_area").html("<div class='alert alert-warning alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>  <p> Votre post à été ajouté et doit être validé par un modérateur avant d\'être visible publiquement</p></div>");
-//	relocate('internal', 'aqh', 'home/-1');
-  //relocate('/user#event20');
+	//	loadNews();
+	/*	$.get('/module/aqh/getAllEvents', (result) => {
+			$("#main-content-wrapper").html(result);
+		});*/
+	$("#top_notif_area").html("<div class='alert alert-warning alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>  <p> Votre post à été ajouté et doit être validé par un modérateur avant d\'être visible publiquement</p></div>");
+	//	relocate('internal', 'aqh', 'home/-1');
+	//relocate('/user#event20');
 });
 
 $(".addComment").click(function (e) {
 	// broadcastPushNotification();
 
-//$(document).on('click', '.add', function () {
+	//$(document).on('click', '.add', function () {
 
 	console.log("click addComment button");
 	e.preventDefault();
 
 	var post_id = $(this).attr('id');
 
-	var selector = "#newcomment"+post_id;
+	var selector = "#newcomment" + post_id;
 
 	var content = $(selector).val();
 	console.log(content);
@@ -209,7 +360,7 @@ $(".addComment").click(function (e) {
 			postid: post_id
 		});
 
-	//	loadNews();
+		//	loadNews();
 		/*$.get('/module/aqh/getAllEvents', (result) => {
 			$("#main-content-wrapper").html(result);
 		});*/

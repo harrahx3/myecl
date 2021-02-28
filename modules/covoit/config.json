@@ -1,0 +1,122 @@
+{
+	"description": "Mur d'affichage des covoits disponibles",
+	"authorisation": "",
+	"beta": true,
+	"contact": {
+		"firstname": "Arthur",
+		"lastname": "Presse",
+		"phone": "0632230810",
+		"email": "arthur.presse@gmail.com"
+	},
+	"tables": [
+		{
+			"name": "covoit",
+			"schema": {
+				"id": "INT PRIMARY KEY NOT NULL AUTO_INCREMENT",
+				"driver": "INT",
+				"appliants": "TEXT",
+				"description": "TEXT",
+				"title": "VARCHAR(255)"
+			}
+		}
+	],
+	"includes": {},
+	"rules": [
+		{
+			"call": {
+				"type": "static",
+				"location": "body/home.html"
+			},
+			"viewport": {
+				"type": "internal",
+				"location": "home"
+			},
+			"includes": {
+				"scripts": [ "static/home.js" ],
+				"styles": [ "static/home.css" ]
+			}
+		},
+		{
+			"call": {
+				"type": "callback",
+				"location": "getAll"
+			},
+			"viewport": {
+				"type": "external",
+				"location": "/module/covoit/getAll"
+			}
+		},
+		{
+			"call": {
+				"type": "callback",
+				"location": "getAllAdmin"
+			},
+			"viewport": {
+				"type": "external",
+				"location": "/module/covoit/getAllAdmin"
+			}
+		},
+		{
+			"call": {
+				"type": "callback",
+				"location": "add"
+			},
+			"viewport": {
+				"type": "external",
+				"location": "/module/covoit/add",
+				"method": "POST"
+			}
+		},
+		{
+			"call": {
+				"type": "callback",
+				"location": "update"
+			},
+			"viewport": {
+				"type": "external",
+				"location": "/module/covoit/update",
+				"method": "POST"
+			}
+		},
+		{
+			"call": {
+				"type": "callback",
+				"location": "delete"
+			},
+			"viewport": {
+				"type": "external",
+				"location": "/module/covoit/delete",
+				"method": "POST"
+			}
+		},
+		{
+			"call": {
+				"type": "callback",
+				"location": "apply"
+			},
+			"viewport": {
+				"type": "external",
+				"location": "/module/covoit/apply",
+				"method": "POST"
+			}
+		},
+		{
+			"call": {
+				"type": "callback",
+				"location": "quit"
+			},
+			"viewport": {
+				"type": "external",
+				"location": "/module/covoit/quit",
+				"method": "POST"
+			}
+		}
+	],
+	"menu": [
+		{
+			"name": "Covoit",
+			"type": "internal",
+			"anchor": "home"
+		}
+	]
+}
